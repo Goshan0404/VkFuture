@@ -24,10 +24,6 @@ android {
 
 
 
-        manifestPlaceholders = [
-            VkExternalAuthRedirectScheme : 'vk' + 'your_app_id',
-        VkExternalAuthRedirectHost : 'vk.com',
-        ]
 
 
     }
