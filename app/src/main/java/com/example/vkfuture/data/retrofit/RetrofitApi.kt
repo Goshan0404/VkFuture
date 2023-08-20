@@ -10,7 +10,7 @@ import retrofit2.http.Query
 interface RetrofitApi {
 
     @GET("User")
-    @Headers("X-API-KEY: ${BuildConfig.apiKey}")
+    @Headers("X-API-KEY: ")
     suspend fun getUserById(@Query("id") id: Int): Response<User>
 
 }
