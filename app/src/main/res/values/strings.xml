@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">VkFuture</string>
+    <string name="vk_client_secret">jh74MHwIEEoSOWfKqB5k</string>
+    <integer name="com_vk_sdk_AppId">51730881</integer>
+
+
+    <string name="vk_external_oauth_redirect_url" translatable="false">vk<com_vk_sdk_AppId>://vk.com</com_vk_sdk_AppId></string>
+    <string name="vk_account_manager_id" translatable="false">packageName.account</string>
 </resources>

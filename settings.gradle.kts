@@ -10,7 +10,13 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        maven {
+            setUrl("https://artifactory-external.vkpartner.ru/artifactory/superappkit-maven-public/")
+        }
+
     }
+
 }
 
 rootProject.name = "VkFuture"
