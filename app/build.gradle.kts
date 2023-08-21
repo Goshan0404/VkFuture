@@ -60,8 +60,9 @@ android {
 
 dependencies {
 
-    implementation ("com.vk:android-sdk-core:3.5.1")
-    implementation ("com.vk:android-sdk-api:3.5.1")
+    implementation ("com.vk:android-sdk-core:4.1.0")
+    implementation ("com.vk:android-sdk-api:4.1.0")
+
 
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
