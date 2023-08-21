@@ -1,5 +1,6 @@
 package com.example.vkfuture.ui.view
 
+import android.graphics.drawable.Drawable
 import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,20 +46,54 @@ import androidx.compose.ui.unit.sp
 import com.example.vkfuture.R
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
+
+data class PostObj(val name: String, val time: String, val text: String, val image_id: Int)
+
 @Preview
 @Composable
 fun News() {
+    val posts = listOf(
+        PostObj("Георгий Чернихов", "7 минут назад", "Бля я не вывожу", R.drawable.gosha),
+        PostObj("Слава Шептихин", "15 минут назад", "В рот ебал я этот Compose", R.drawable.slava),
+        PostObj(
+            "JetPack Compose",
+            "постоянно",
+            "В рот я вас ебал)))))))",
+            R.drawable.ic_launcher_foreground
+        ),
+        PostObj("Георгий Чернихов", "7 минут назад", "Бля я не вывожу", R.drawable.gosha),
+        PostObj("Слава Шептихин", "15 минут назад", "В рот ебал я этот Compose", R.drawable.slava),
+        PostObj(
+            "JetPack Compose",
+            "постоянно",
+            "В рот я вас ебал)))))))",
+            R.drawable.ic_launcher_foreground
+        ),
+        PostObj("Георгий Чернихов", "7 минут назад", "Бля я не вывожу", R.drawable.gosha),
+        PostObj("Слава Шептихин", "15 минут назад", "В рот ебал я этот Compose", R.drawable.slava),
+        PostObj(
+            "JetPack Compose",
+            "постоянно",
+            "В рот я вас ебал)))))))",
+            R.drawable.ic_launcher_foreground
+        )
+    )
 
+    LazyColumn {
+        items(posts) { post ->
+            Post(post = post)
+        }
+    }
 }
 
 @Preview
 @Composable
 fun PostPreview() {
-    Post("Георгий Чернихов", "7 минут назад", "Бля я не вывожу")
+    Post(PostObj("Георгий Чернихов", "7 минут назад", "Бля я не вывожу", R.drawable.gosha))
 }
 
 @Composable
-fun Post(name: String, time: String, text: String) {
+fun Post(post: PostObj) {
     MaterialTheme {
         Card(
             modifier = Modifier
@@ -67,11 +104,13 @@ fun Post(name: String, time: String, text: String) {
                 )
                 .padding(4.dp) // TODO: ПОДУМАТЬ
         ) {
-            Row(modifier = Modifier
-                .padding(12.dp)
-                .height(48.dp)) {
+            Row(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .height(48.dp)
+            ) {
                 Image(
-                    painter = painterResource(id = R.drawable.gosha),
+                    painter = painterResource(id = post.image_id),
                     contentDescription = "Avatar",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -82,19 +121,29 @@ fun Post(name: String, time: String, text: String) {
                 Column(
                     Modifier
                         .fillMaxHeight()
-                        .padding(start = 8.dp), verticalArrangement = Arrangement.Center) {
-                    Text(name, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium, fontSize = 16.sp)
-                    Text(time, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                        .padding(start = 8.dp), verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        post.name,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp
+                    )
+                    Text(
+                        post.time,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp
+                    )
                 }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
-                IconButton(onClick = { /*TODO*/ },) {
-                                    Icon(Icons.Filled.MoreVert, contentDescription = "Больше")
-                                }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "Больше")
+                    }
                 }
 
 
             }
-            Text(text)
+            Text(post.text)
             Row {
                 FilledIconButton(onClick = { /*TODO*/ }) {
 
@@ -113,7 +162,7 @@ fun huy(minecraft: Boolean = false) {
     Card {
         Row { Text("Hello") }
         Text("Android")
-        if(minecraft){
+        if (minecraft) {
             Text("Minecraft")
         }
     }
@@ -125,7 +174,7 @@ fun huy(minecraft: Boolean = false, photo: Image? = null) {
     Card {
         Row { Text("Hello") }
         Text("Android")
-        if(photo != null){
+        if (photo != null) {
             Text("Minecraft")
         }
     }
@@ -133,6 +182,6 @@ fun huy(minecraft: Boolean = false, photo: Image? = null) {
 
 @Preview
 @Composable
-fun huyPreview(){
+fun huyPreview() {
     huy(true)
 }
