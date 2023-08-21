@@ -1,9 +1,11 @@
 package com.example.vkfuture.ui.view
 
+import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -32,19 +34,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.InspectableModifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vkfuture.R
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Preview
 @Composable
 fun News() {
-    Column {
 
-    }
 }
 
 @Preview
@@ -63,6 +65,7 @@ fun Post(name: String, time: String, text: String) {
                     color = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(size = 12.dp)
                 )
+                .padding(4.dp) // TODO: ПОДУМАТЬ
         ) {
             Row(modifier = Modifier
                 .padding(12.dp)
@@ -83,9 +86,12 @@ fun Post(name: String, time: String, text: String) {
                     Text(name, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium, fontSize = 16.sp)
                     Text(time, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                 IconButton(onClick = { /*TODO*/ },) {
-                    Icon(Icons.Filled.MoreVert, contentDescription = "Больше")
+                                    Icon(Icons.Filled.MoreVert, contentDescription = "Больше")
+                                }
                 }
+
 
             }
             Text(text)
@@ -103,13 +109,30 @@ fun Post(name: String, time: String, text: String) {
 
 @Preview
 @Composable
-fun image() {
-    Image(
-        painter = painterResource(id = R.drawable.gosha),
-        contentDescription = "Avatar",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .size(64.dp)
-            .clip(CircleShape)
-    )
+fun huy(minecraft: Boolean = false) {
+    Card {
+        Row { Text("Hello") }
+        Text("Android")
+        if(minecraft){
+            Text("Minecraft")
+        }
+    }
+}
+
+@Preview
+@Composable
+fun huy(minecraft: Boolean = false, photo: Image? = null) {
+    Card {
+        Row { Text("Hello") }
+        Text("Android")
+        if(photo != null){
+            Text("Minecraft")
+        }
+    }
+}
+
+@Preview
+@Composable
+fun huyPreview(){
+    huy(true)
 }
