@@ -24,8 +24,6 @@ android {
 
 
 
-
-
     }
 
 
@@ -37,14 +35,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-
-        val key: String = gradleLocalProperties(rootDir).getProperty("apiKey")
-        val url: String = gradleLocalProperties(rootDir).getProperty("baseUrl")
-        getByName("debug") {
-            buildConfigField("String", "apiKey", key)
-            buildConfigField("String", "baseUrl", url)
-
         }
     }
     compileOptions {
@@ -71,8 +61,9 @@ android {
 
 dependencies {
 
-    implementation ("com.vk:oauth-vk:0.110-24426")
-    implementation ("com.vk:vksdk-pub:0.110-24426")
+    implementation ("com.vk:android-sdk-core:3.5.1")
+    implementation ("com.vk:android-sdk-api:3.5.1")
+
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation ("com.squareup.okhttp3:okhttp:4.10.0")

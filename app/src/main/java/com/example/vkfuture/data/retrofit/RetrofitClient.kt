@@ -8,7 +8,7 @@ object RetrofitClient {
 
     val retrofitApi: RetrofitApi = Retrofit
         .Builder()
-        .baseUrl(BuildConfig.baseUrl)
+        .baseUrl("https://api.vk.com/method/")
         .addConverterFactory(
             GsonConverterFactory.create()
         )
