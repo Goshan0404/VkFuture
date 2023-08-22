@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             VkFutureTheme {
-                // A surface container using the 'background' color from the theme
                 val navController = rememberNavController()
                 var title by remember { mutableStateOf("Новости") }
                 Scaffold(topBar = {
