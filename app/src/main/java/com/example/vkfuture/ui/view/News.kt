@@ -5,6 +5,7 @@ import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,22 +24,30 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.Send
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.InspectableModifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,28 +62,28 @@ data class PostObj(val name: String, val time: String, val text: String, val ima
 @Composable
 fun News() {
     val posts = listOf(
-        PostObj("Георгий Чернихов", "7 минут назад", "Бля я не вывожу", R.drawable.gosha),
-        PostObj("Слава Шептихин", "15 минут назад", "В рот ебал я этот Compose", R.drawable.slava),
+        PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha),
+        PostObj("Слава Шептихин", "15 минут назад", "Почему в Compose нет surface-container(((", R.drawable.slava),
         PostObj(
             "JetPack Compose",
             "постоянно",
-            "В рот я вас ебал)))))))",
+            "Ха-ха)))))))",
             R.drawable.ic_launcher_foreground
         ),
-        PostObj("Георгий Чернихов", "7 минут назад", "Бля я не вывожу", R.drawable.gosha),
-        PostObj("Слава Шептихин", "15 минут назад", "В рот ебал я этот Compose", R.drawable.slava),
+        PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha),
+        PostObj("Слава Шептихин", "15 минут назад", "Почему в Compose нет surface-container(((", R.drawable.slava),
         PostObj(
             "JetPack Compose",
             "постоянно",
-            "В рот я вас ебал)))))))",
+            "Ха-ха)))))))",
             R.drawable.ic_launcher_foreground
         ),
-        PostObj("Георгий Чернихов", "7 минут назад", "Бля я не вывожу", R.drawable.gosha),
-        PostObj("Слава Шептихин", "15 минут назад", "В рот ебал я этот Compose", R.drawable.slava),
+        PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha),
+        PostObj("Слава Шептихин", "15 минут назад", "Почему в Compose нет surface-container(((", R.drawable.slava),
         PostObj(
             "JetPack Compose",
             "постоянно",
-            "В рот я вас ебал)))))))",
+            "Ха-ха)))))))",
             R.drawable.ic_launcher_foreground
         )
     )
@@ -89,7 +98,7 @@ fun News() {
 @Preview
 @Composable
 fun PostPreview() {
-    Post(PostObj("Георгий Чернихов", "7 минут назад", "Бля я не вывожу", R.drawable.gosha))
+    Post(PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha))
 }
 
 @Composable
@@ -145,11 +154,15 @@ fun Post(post: PostObj) {
             }
             Text(post.text)
             Row {
-                FilledIconButton(onClick = { /*TODO*/ }) {
-
+                TextButton(onClick = { /*TODO*/ }) {
+                    Row {
+                        Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Лайк", Modifier.size(24.dp))
+                        Text("100")
+                    }
                 }
+                //FilledIconButton("100", Icons.Outlined.MailOutline, onClick = { /*TODO*/ })
                 FilledIconButton(onClick = { /*TODO*/ }) {
-
+                    Icon(Icons.Outlined.Send, contentDescription = "Репост")
                 }
             }
         }

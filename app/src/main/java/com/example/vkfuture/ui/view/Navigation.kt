@@ -53,7 +53,7 @@ fun BottomNavBar(
     NavigationBar(modifier = modifier) {
         items.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route
-            NavigationBarItem(selected = selected, onClick = { onItemClick(item) }, icon = {
+            NavigationBarItem(selected = selected, onClick = { onItemClick(item) }, label = { Text(item.name) }, icon = {
                 Column(horizontalAlignment = CenterHorizontally) {
                     if (item.badgeCount > 0) {
                         BadgedBox(badge = { Badge { Text(item.badgeCount.toString()) } }) {
@@ -62,7 +62,6 @@ fun BottomNavBar(
                     } else {
                         Icon(imageVector = item.icon, contentDescription = item.name)
                     }
-                    Text(text = item.name, textAlign = TextAlign.Center)
                 }
             })
         }
