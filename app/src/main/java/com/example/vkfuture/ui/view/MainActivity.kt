@@ -19,7 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import com.example.vkfuture.data.model.BottomNavItem
+import com.example.vkfuture.data.model.Token
+import com.example.vkfuture.ui.model.BottomNavItem
 import com.example.vkfuture.ui.stateholders.NewsViewModel
 import com.example.vkfuture.ui.theme.VkFutureTheme
 import com.vk.api.sdk.VK
@@ -32,13 +33,36 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         newsViewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
+        authorization()
         setContent {
             VkFutureTheme {
                 // A surface container using the 'background' color from the theme
                 setView()
             }
         }
-        authorization()
+
+    }
+
+    private fun authorization() {
+        val authLauncher = VK.login(this) { result: VKAuthenticationResult ->
+            when (result) {
+                is VKAuthenticationResult.Success -> {
+                    Token.setToken(
+                        result.token.accessToken,
+                        result.token.userId.toString()
+                    )
+
+                    newsViewModel.userAuthorizated {
+                       it!!.response.groups.get(0).name
+                    }
+                }
+
+                is VKAuthenticationResult.Failed -> {
+
+                }
+            }
+        }
+        authLauncher.launch(arrayListOf(WALL, PHOTOS, FRIENDS))
     }
 
     @Composable
@@ -80,18 +104,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun authorization() {
-        val authLauncher = VK.login(this) { result: VKAuthenticationResult ->
-            when (result) {
-                is VKAuthenticationResult.Success -> {
-                    newsViewModel.userAuthorizated()
-                }
 
-                is VKAuthenticationResult.Failed -> {
-
-                }
-            }
-        }
-        authLauncher.launch(arrayListOf(WALL, PHOTOS, FRIENDS))
-    }
 }
