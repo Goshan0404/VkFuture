@@ -1,78 +1,97 @@
 package com.example.vkfuture.ui.view
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.vkfuture.data.repository.UserRepository
-
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.rememberNavController
+import com.example.vkfuture.data.model.BottomNavItem
+import com.example.vkfuture.ui.stateholders.NewsViewModel
 import com.example.vkfuture.ui.theme.VkFutureTheme
 import com.vk.api.sdk.VK
+import com.vk.api.sdk.auth.VKAuthenticationResult
+import com.vk.api.sdk.auth.VKScope.*
 
-import com.vk.api.sdk.auth.VKAccessToken
-import com.vk.api.sdk.auth.VKAuthCallback
-import com.vk.api.sdk.auth.VKScope
-import com.vk.api.sdk.exceptions.VKAuthException
-
+@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
-
+    private lateinit var newsViewModel: NewsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        newsViewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
         setContent {
             VkFutureTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
+                setView()
+            }
+        }
+        authorization()
+    }
+
+    @Composable
+    private fun setView() {
+        val navController = rememberNavController()
+        var title by remember { mutableStateOf("Новости") }
+        Scaffold(topBar = {
+            TopAppBar(title = {
+                Text(title)
+            })
+        }, bottomBar = {
+            BottomNavBar(
+                items = listOf(
+                    BottomNavItem(
+                        name = "Новости",
+                        route = "news",
+                        icon = Icons.Filled.Home
+                    ),
+                    BottomNavItem(
+                        name = "Сообщения",
+                        route = "messages",
+                        icon = Icons.Filled.MailOutline
+                    ),
+                    BottomNavItem(
+                        name = "Другое",
+                        route = "other",
+                        icon = Icons.Filled.MoreVert
+                    )
+                ),
+                navController = navController,
+                onItemClick = {
+                    navController.navigate(it.route)
+                    title = it.name
+                    Log.d("TITLE_CHANGE", title)
+                }
+            )
+        }) { paddingValues ->
+            Navigation(navController = navController, paddingValues = paddingValues)
+        }
+    }
+
+    private fun authorization() {
+        val authLauncher = VK.login(this) { result: VKAuthenticationResult ->
+            when (result) {
+                is VKAuthenticationResult.Success -> {
+                    newsViewModel.userAuthorizated()
+                }
+
+                is VKAuthenticationResult.Failed -> {
+
                 }
             }
         }
-        VK.login(this, arrayListOf(VKScope.WALL, VKScope.PHOTOS))
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val callback = object : VKAuthCallback {
-            override fun onLogin(token: VKAccessToken) {
-                Log.d("authResult", token.phone.toString())
-
-                val userRepository = UserRepository()
-                userRepository.getUserById(token.accessToken, token.userId.toString()) {
-                    println(it)
-                }
-            }
-
-            override fun onLoginFailed(authException: VKAuthException) {
-                Log.d("authResult", authException.message.toString())
-            }
-        }
-        if (data == null || !VK.onActivityResult(requestCode, resultCode, data, callback)) {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-}
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!", modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    VkFutureTheme {
-        Greeting("Android")
+        authLauncher.launch(arrayListOf(WALL, PHOTOS, FRIENDS))
     }
 }
