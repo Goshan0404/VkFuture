@@ -20,7 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.vkfuture.ui.model.BottomNavItem
 import com.example.vkfuture.ui.view.messages.Messages
-import com.example.vkfuture.ui.view.news.News
+
 
 @Composable
 fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {

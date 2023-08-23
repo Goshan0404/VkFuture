@@ -1,7 +1,7 @@
 package com.example.vkfuture.data.repository
 
-import com.example.vkfuture.data.model.News
-import com.example.vkfuture.data.model.Token
+import com.example.vkfuture.data.model.modelnews.News
+import com.example.vkfuture.data.model.modelnews.Token
 import com.example.vkfuture.data.retrofit.RetrofitClient
 import retrofit2.Response
 
