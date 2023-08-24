@@ -2,6 +2,7 @@ package com.example.vkfuture.ui.view
 
 import android.graphics.drawable.Drawable
 import android.media.Image
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,15 +57,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.example.vkfuture.R
+import com.example.vkfuture.ui.stateholders.NewsViewModel
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 
 data class PostObj(val name: String, val time: String, val text: String, val image_id: Int)
 
-@Preview
 @Composable
-fun News() {
+fun News(activity: ComponentActivity) {
+    /*var newsViewModel: NewsViewModel = ViewModelProvider(activity).get(NewsViewModel::class.java)
+    newsViewModel.userAuthorizated { news, arrayOfHasMaps ->
+
+    }*/
     val posts = listOf(
         PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha),
         PostObj("Слава Шептихин", "15 минут назад", "Почему в Compose нет surface-container(((", R.drawable.slava),

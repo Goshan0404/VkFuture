@@ -1,5 +1,7 @@
 package com.example.vkfuture.ui.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -19,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
+import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Token
 import com.example.vkfuture.ui.model.BottomNavItem
 import com.example.vkfuture.ui.stateholders.NewsViewModel
@@ -29,12 +32,14 @@ import com.vk.api.sdk.auth.VKScope.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
-    private lateinit var newsViewModel: NewsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
+        val prefManager = PreferenceManager(this)
         super.onCreate(savedInstanceState)
-
-        newsViewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
-        authorization()
+        var token = prefManager.getData("access_token", "")
+        if (token.equals("")) {
+            authorization()
+        }
+        Log.d("VK_FUTURE", resources.getString(R.string.token))
 
         setContent {
             VkFutureTheme {
@@ -46,18 +51,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun authorization() {
+        val prefManager = PreferenceManager(this)
         val authLauncher = VK.login(this) { result: VKAuthenticationResult ->
             when (result) {
                 is VKAuthenticationResult.Success -> {
+                    prefManager.saveData("access_token", result.token.accessToken)
 
-                    Token.setToken(
-                        result.token.accessToken,
-                        result.token.userId.toString()
-                    )
-
-                    newsViewModel.userAuthorizated { news, arrayOfHasMaps ->
-
-                    }
                 }
 
                 is VKAuthenticationResult.Failed -> {
@@ -103,9 +102,25 @@ class MainActivity : ComponentActivity() {
                 }
             )
         }) { paddingValues ->
-            Navigation(navController = navController, paddingValues = paddingValues)
+            Navigation(
+                navController = navController,
+                paddingValues = paddingValues,
+                activity = this
+            )
         }
     }
+}
 
+class PreferenceManager(context: Context){
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("com.example.vkfuture", Context.MODE_PRIVATE)
 
+    fun saveData(key: String, value: String){
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value)
+        editor.commit()
+    }
+
+    fun getData(key: String, defaultValue: String): String {
+        return sharedPreferences.getString(key, defaultValue) ?: defaultValue
+    }
 }

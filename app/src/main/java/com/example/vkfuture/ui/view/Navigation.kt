@@ -1,5 +1,6 @@
 package com.example.vkfuture.ui.view
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -23,14 +24,14 @@ import com.example.vkfuture.ui.view.messages.Messages
 
 
 @Composable
-fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {
+fun Navigation(navController: NavHostController, paddingValues: PaddingValues, activity: ComponentActivity) {
     NavHost(
         navController = navController,
         startDestination = "news",
         Modifier.padding(paddingValues)
     ) {
         composable("news") {
-            News()
+            News(activity)
         }
         composable("messages") {
             Messages()
