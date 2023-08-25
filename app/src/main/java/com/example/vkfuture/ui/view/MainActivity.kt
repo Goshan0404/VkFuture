@@ -29,6 +29,7 @@ import com.example.vkfuture.ui.theme.VkFutureTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope.*
+import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -39,13 +40,12 @@ class MainActivity : ComponentActivity() {
 
 
         prefManager = PreferenceManager(this)
-
+        var ready = false
         authorization {
             Token.setToken(prefManager.getData("access_token", ""),
                 prefManager.getData("user_id", ""))
+            ready = true
         }
-
-
         setContent {
             VkFutureTheme {
                 // A surface container using the 'background' color from the theme

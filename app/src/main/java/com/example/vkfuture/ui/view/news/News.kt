@@ -1,7 +1,9 @@
 package com.example.vkfuture.ui.view
 
+import android.app.Person
 import android.graphics.drawable.Drawable
 import android.media.Image
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,6 +61,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.example.vkfuture.R
+import com.example.vkfuture.data.model.modelnews.Group
+import com.example.vkfuture.data.model.modelnews.Item
+import com.example.vkfuture.data.model.modelnews.Profile
+import com.example.vkfuture.data.model.modelnews.Token
 import com.example.vkfuture.ui.stateholders.NewsViewModel
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
@@ -67,52 +73,29 @@ data class PostObj(val name: String, val time: String, val text: String, val ima
 
 @Composable
 fun News(activity: ComponentActivity) {
+    var news = ArrayList<Item>()
+    var profiles = HashMap<Int, Profile>()
+    var groups = HashMap<Int, Group>()
     var newsViewModel: NewsViewModel = ViewModelProvider(activity).get(NewsViewModel::class.java)
-    newsViewModel.userAuthorizated { news, arrayOfHasMaps ->
-
+    newsViewModel.userAuthorizated { newsResponse, arrayOfHasMaps ->
+        news = newsResponse as ArrayList<Item>
     }
-    val posts = listOf(
-        PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha),
-        PostObj("Слава Шептихин", "15 минут назад", "Почему в Compose нет surface-container(((", R.drawable.slava),
-        PostObj(
-            "JetPack Compose",
-            "постоянно",
-            "Ха-ха)))))))",
-            R.drawable.ic_launcher_foreground
-        ),
-        PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha),
-        PostObj("Слава Шептихин", "15 минут назад", "Почему в Compose нет surface-container(((", R.drawable.slava),
-        PostObj(
-            "JetPack Compose",
-            "постоянно",
-            "Ха-ха)))))))",
-            R.drawable.ic_launcher_foreground
-        ),
-        PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha),
-        PostObj("Слава Шептихин", "15 минут назад", "Почему в Compose нет surface-container(((", R.drawable.slava),
-        PostObj(
-            "JetPack Compose",
-            "постоянно",
-            "Ха-ха)))))))",
-            R.drawable.ic_launcher_foreground
-        )
-    )
 
     LazyColumn {
-        items(posts) { post ->
-            Post(post = post)
+        items(news) { post ->
+            if (post.owner_id > 0) Post(post, profiles[post.owner_id])
         }
     }
 }
 
-@Preview
+/*@Preview
 @Composable
 private fun PostPreview() {
     Post(PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha))
-}
+}*/
 
 @Composable
-private fun Post(post: PostObj) {
+private fun Post(post: Item, profile: Profile?) {
     MaterialTheme {
         Card(
             modifier = Modifier
@@ -129,7 +112,7 @@ private fun Post(post: PostObj) {
                     .height(48.dp)
             ) {
                 Image(
-                    painter = painterResource(id = post.image_id),
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
                     contentDescription = "Avatar",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -143,13 +126,13 @@ private fun Post(post: PostObj) {
                         .padding(start = 8.dp), verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        post.name,
+                        profile?.first_name + profile?.last_name,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp
                     )
                     Text(
-                        post.time,
+                        post.date.toString(),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )
