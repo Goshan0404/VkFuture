@@ -44,6 +44,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,17 +74,27 @@ var profiles = HashMap<Int, Profile>()
 var groups = HashMap<Int, Group>()
 @Composable
 fun News(activity: ComponentActivity) {
-    var news = ArrayList<Item>()
+    val news = remember { mutableStateListOf<Item>() }
 
     var newsViewModel: NewsViewModel = ViewModelProvider(activity).get(NewsViewModel::class.java)
     newsViewModel.userAuthorizated { newsResponse, groupsResponse, profilesResponse ->
-        news = newsResponse as ArrayList<Item>
+        newsResponse.forEach{
+            if (it.text != null) {
+                news.add(it)
+                Log.d("com.example.vkfuture", it.toString())
+            }
+        }
+        //news = newsResponse as ArrayList<Item>
         profiles = profilesResponse
         groups = groupsResponse
     }
 
     LazyColumn {
+        item{
+            Text("HUY")
+        }
         items(news) { post ->
+            Log.d("OWNER_ID", post.owner_id.toString())
             if (post.owner_id > 0) {
                 PersonPost(post = post)
             } else {
