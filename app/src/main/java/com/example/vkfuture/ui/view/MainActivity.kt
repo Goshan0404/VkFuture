@@ -35,11 +35,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val prefManager = PreferenceManager(this)
         super.onCreate(savedInstanceState)
+
         var token = prefManager.getData("access_token", "")
         if (token.equals("")) {
             authorization()
         }
-        Log.d("VK_FUTURE", resources.getString(R.string.token))
+        Token.setToken(prefManager.getData("access_token", ""),
+            prefManager.getData("user_id", ""))
 
         setContent {
             VkFutureTheme {
@@ -47,7 +49,6 @@ class MainActivity : ComponentActivity() {
                 setView()
             }
         }
-
     }
 
     private fun authorization() {
@@ -56,7 +57,7 @@ class MainActivity : ComponentActivity() {
             when (result) {
                 is VKAuthenticationResult.Success -> {
                     prefManager.saveData("access_token", result.token.accessToken)
-
+                    prefManager.saveData("user_id", result.token.userId.toString())
                 }
 
                 is VKAuthenticationResult.Failed -> {

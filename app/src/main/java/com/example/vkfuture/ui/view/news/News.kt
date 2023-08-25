@@ -67,10 +67,10 @@ data class PostObj(val name: String, val time: String, val text: String, val ima
 
 @Composable
 fun News(activity: ComponentActivity) {
-    /*var newsViewModel: NewsViewModel = ViewModelProvider(activity).get(NewsViewModel::class.java)
+    var newsViewModel: NewsViewModel = ViewModelProvider(activity).get(NewsViewModel::class.java)
     newsViewModel.userAuthorizated { news, arrayOfHasMaps ->
 
-    }*/
+    }
     val posts = listOf(
         PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha),
         PostObj("Слава Шептихин", "15 минут назад", "Почему в Compose нет surface-container(((", R.drawable.slava),
@@ -107,12 +107,12 @@ fun News(activity: ComponentActivity) {
 
 @Preview
 @Composable
-fun PostPreview() {
+private fun PostPreview() {
     Post(PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha))
 }
 
 @Composable
-fun Post(post: PostObj) {
+private fun Post(post: PostObj) {
     MaterialTheme {
         Card(
             modifier = Modifier
@@ -175,7 +175,7 @@ fun Post(post: PostObj) {
 }
 
 @Composable
-fun TextIconButton(text: String, icon: ImageVector, modifier: Modifier = Modifier, onClick: () -> Unit){
+private fun TextIconButton(text: String, icon: ImageVector, modifier: Modifier = Modifier, onClick: () -> Unit){
     Surface(color = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.clickable(onClick = onClick), shape = RoundedCornerShape(100.dp)){
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically){
             Icon(imageVector = icon, contentDescription = text, Modifier.padding(4.dp))

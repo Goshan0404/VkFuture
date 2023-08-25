@@ -18,6 +18,7 @@ class NewsViewModel: ViewModel() {
                 newsRepository.getNews("Post")
             }
             response.await()
+
             val result =  response.getCompleted().body()!!.response
 
             val hasMapGroups = HashMap<Int, Any>()
