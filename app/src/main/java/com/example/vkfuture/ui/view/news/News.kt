@@ -68,34 +68,46 @@ import com.example.vkfuture.data.model.modelnews.Token
 import com.example.vkfuture.ui.stateholders.NewsViewModel
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
-
-data class PostObj(val name: String, val time: String, val text: String, val image_id: Int)
-
+var profiles = HashMap<Int, Profile>()
+var groups = HashMap<Int, Group>()
 @Composable
 fun News(activity: ComponentActivity) {
     var news = ArrayList<Item>()
-    var profiles = HashMap<Int, Profile>()
-    var groups = HashMap<Int, Group>()
+
     var newsViewModel: NewsViewModel = ViewModelProvider(activity).get(NewsViewModel::class.java)
-    newsViewModel.userAuthorizated { newsResponse, arrayOfHasMaps ->
+    newsViewModel.userAuthorizated { newsResponse, groupsResponse, profilesResponse ->
         news = newsResponse as ArrayList<Item>
+        profiles = profilesResponse
+        groups = groupsResponse
     }
 
     LazyColumn {
         items(news) { post ->
-            if (post.owner_id > 0) Post(post, profiles[post.owner_id])
+            if (post.owner_id > 0) {
+                PersonPost(post = post)
+            } else {
+                GroupPost(post = post)
+            }
         }
     }
 }
 
-/*@Preview
 @Composable
-private fun PostPreview() {
-    Post(PostObj("Георгий Чернихов", "7 минут назад", "Господи как сложно", R.drawable.gosha))
-}*/
+private fun PersonPost(post: Item) {
+    val profile = profiles.get(post.owner_id)
+    val name = profile?.first_name + profile?.last_name
+    Post(post = post, name = name)
+}
 
 @Composable
-private fun Post(post: Item, profile: Profile?) {
+private fun GroupPost(post: Item) {
+    val group = groups.get(post.owner_id)
+    val name = group?.name
+    Post(post = post, name = name)
+}
+
+@Composable
+private fun Post(post: Item, name: String?) {
     MaterialTheme {
         Card(
             modifier = Modifier
@@ -126,7 +138,7 @@ private fun Post(post: Item, profile: Profile?) {
                         .padding(start = 8.dp), verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        profile?.first_name + profile?.last_name,
+                        name ?: "",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp

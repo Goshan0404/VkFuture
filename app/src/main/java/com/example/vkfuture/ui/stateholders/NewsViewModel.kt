@@ -2,8 +2,10 @@ package com.example.vkfuture.ui.stateholders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.News
+import com.example.vkfuture.data.model.modelnews.Profile
 import com.example.vkfuture.data.repository.NewsRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -12,7 +14,10 @@ import retrofit2.Response
 
 class NewsViewModel: ViewModel() {
     val newsRepository = NewsRepository()
-    fun userAuthorizated(callBack: (news: List<Item>, arrayOfHasMaps: Array<HashMap<Int, Any>>) -> Unit) {
+    fun userAuthorizated(
+        callBack: (news: List<Item>,
+                   hasMapGroups: HashMap<Int, Group>,
+                   hasMapProfiles: HashMap<Int, Profile>) -> Unit) {
 
         viewModelScope.launch {
             val response: Deferred<Response<News>> = async {
@@ -22,20 +27,20 @@ class NewsViewModel: ViewModel() {
 
             val result =  response.getCompleted().body()!!.response
 
-            val hasMapGroups = HashMap<Int, Any>()
-            val hasMapProfiles = HashMap<Int, Any>()
+            val groups = HashMap<Int, Group>()
+            val profiles = HashMap<Int, Profile>()
 
             result.groups.forEach {
-                hasMapGroups[it.id] = it
+                groups[it.id] = it
             }
 
             result.profiles.forEach {
-                hasMapProfiles[it.id] = it
+                profiles[it.id] = it
             }
 
-            val arrayOfHasMaps = arrayOf(hasMapGroups, hasMapProfiles)
+            val arrayOfHasMaps = arrayOf(groups, profiles)
 
-            callBack.invoke(response.getCompleted().body()!!.response.items, arrayOfHasMaps)
+            callBack.invoke(response.getCompleted().body()!!.response.items, groups, profiles)
         }
     }
 }
