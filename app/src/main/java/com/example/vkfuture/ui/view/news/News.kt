@@ -81,7 +81,6 @@ fun News(activity: ComponentActivity) {
         newsResponse.forEach{
             if (it.text != null) {
                 news.add(it)
-                Log.d("com.example.vkfuture", it.toString())
             }
         }
         //news = newsResponse as ArrayList<Item>
@@ -90,11 +89,7 @@ fun News(activity: ComponentActivity) {
     }
 
     LazyColumn {
-        item{
-            Text("HUY")
-        }
         items(news) { post ->
-            Log.d("OWNER_ID", post.owner_id.toString())
             if (post.owner_id > 0) {
                 PersonPost(post = post)
             } else {
@@ -107,13 +102,13 @@ fun News(activity: ComponentActivity) {
 @Composable
 private fun PersonPost(post: Item) {
     val profile = profiles.get(post.owner_id)
-    val name = profile?.first_name + profile?.last_name
+    val name = "${profile?.first_name}  ${profile?.last_name}"
     Post(post = post, name = name)
 }
 
 @Composable
 private fun GroupPost(post: Item) {
-    val group = groups.get(post.owner_id)
+    val group = groups.get(post.owner_id * -1)
     val name = group?.name
     Post(post = post, name = name)
 }
@@ -169,13 +164,13 @@ private fun Post(post: Item, name: String?) {
 
 
             }
-            Text(post.text, modifier = Modifier.padding(start = 12.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = 24.sp)
+            Text(post.text, modifier = Modifier.padding(start = 12.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp)
             Row(Modifier.padding(12.dp)) {
-                TextIconButton("100", Icons.Outlined.FavoriteBorder, onClick = { /*TODO*/ })
+                TextIconButton(post.likes.count.toString(), Icons.Outlined.FavoriteBorder, onClick = { /*TODO*/ })
                 Spacer(Modifier.width(8.dp))
-                TextIconButton("100", Icons.Outlined.MailOutline, onClick = { /*TODO*/ })
+                TextIconButton(post.comments.count.toString(), Icons.Outlined.MailOutline, onClick = { /*TODO*/ })
                 Spacer(Modifier.width(8.dp))
-                TextIconButton("100", Icons.Outlined.Send, onClick = { /*TODO*/ })
+                TextIconButton(post.reposts.count.toString(), Icons.Outlined.Send, onClick = { /*TODO*/ })
             }
         }
     }
