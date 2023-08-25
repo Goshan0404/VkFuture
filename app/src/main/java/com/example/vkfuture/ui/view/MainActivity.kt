@@ -32,16 +32,19 @@ import com.vk.api.sdk.auth.VKScope.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+    private lateinit var prefManager: PreferenceManager
     override fun onCreate(savedInstanceState: Bundle?) {
-        val prefManager = PreferenceManager(this)
+
         super.onCreate(savedInstanceState)
 
-        var token = prefManager.getData("access_token", "")
-        if (token.equals("")) {
-            authorization()
+
+        prefManager = PreferenceManager(this)
+
+        authorization {
+            Token.setToken(prefManager.getData("access_token", ""),
+                prefManager.getData("user_id", ""))
         }
-        Token.setToken(prefManager.getData("access_token", ""),
-            prefManager.getData("user_id", ""))
+
 
         setContent {
             VkFutureTheme {
@@ -51,13 +54,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun authorization() {
-        val prefManager = PreferenceManager(this)
+    private fun authorization(callback: () -> Unit) {
+        var token = prefManager.getData("access_token", "")
+        if (token != "") return callback.invoke()
+
         val authLauncher = VK.login(this) { result: VKAuthenticationResult ->
             when (result) {
                 is VKAuthenticationResult.Success -> {
                     prefManager.saveData("access_token", result.token.accessToken)
                     prefManager.saveData("user_id", result.token.userId.toString())
+
+                    callback.invoke()
                 }
 
                 is VKAuthenticationResult.Failed -> {
