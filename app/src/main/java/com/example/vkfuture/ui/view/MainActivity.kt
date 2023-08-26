@@ -20,6 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Token
@@ -28,12 +30,14 @@ import com.example.vkfuture.ui.stateholders.NewsViewModel
 import com.example.vkfuture.ui.theme.VkFutureTheme
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
+import com.vk.api.sdk.auth.VKScope
 import com.vk.api.sdk.auth.VKScope.*
 import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     private lateinit var prefManager: PreferenceManager
+    private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -48,11 +52,39 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        val prefManager = PreferenceManager(this)
+        var token = prefManager.getData("access_token", "")
+        var user_id = prefManager.getData("user_id", "")
+
+        if (token == "") {
+            val authLauncher = VK.login(this) { result: VKAuthenticationResult ->
+                when (result) {
+                    is VKAuthenticationResult.Success -> {
+                        prefManager.saveData("access_token", result.token.accessToken)
+                        prefManager.saveData("user_id", result.token.userId.toString())
+                        token = result.token.accessToken
+                        user_id = result.token.userId.value.toString()
+                    }
+
+                    is VKAuthenticationResult.Failed -> {
+
+                    }
+                }
+            }
+            authLauncher.launch(arrayListOf(VKScope.WALL, VKScope.PHOTOS, VKScope.FRIENDS))
+        }
+        navController.navigate("news")
+
+    }
+
 
 
     @Composable
     private fun setView() {
-        val navController = rememberNavController()
+        navController = rememberNavController()
         var title by remember { mutableStateOf("Новости") }
         Scaffold(topBar = {
             TopAppBar(title = {
