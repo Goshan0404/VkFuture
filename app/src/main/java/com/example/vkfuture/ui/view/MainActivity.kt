@@ -40,12 +40,6 @@ class MainActivity : ComponentActivity() {
 
 
         prefManager = PreferenceManager(this)
-        var ready = false
-        authorization {
-            Token.setToken(prefManager.getData("access_token", ""),
-                prefManager.getData("user_id", ""))
-            ready = true
-        }
         setContent {
             VkFutureTheme {
                 // A surface container using the 'background' color from the theme
@@ -54,26 +48,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun authorization(callback: () -> Unit) {
-        var token = prefManager.getData("access_token", "")
-        if (token != "") return callback.invoke()
 
-        val authLauncher = VK.login(this) { result: VKAuthenticationResult ->
-            when (result) {
-                is VKAuthenticationResult.Success -> {
-                    prefManager.saveData("access_token", result.token.accessToken)
-                    prefManager.saveData("user_id", result.token.userId.toString())
-
-                    callback.invoke()
-                }
-
-                is VKAuthenticationResult.Failed -> {
-
-                }
-            }
-        }
-        authLauncher.launch(arrayListOf(WALL, PHOTOS, FRIENDS))
-    }
 
     @Composable
     private fun setView() {

@@ -27,7 +27,7 @@ import com.example.vkfuture.ui.view.messages.Messages
 fun Navigation(navController: NavHostController, paddingValues: PaddingValues, activity: ComponentActivity) {
     NavHost(
         navController = navController,
-        startDestination = "news",
+        startDestination = "auth",
         Modifier.padding(paddingValues)
     ) {
         composable("news") {
@@ -38,6 +38,9 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, a
         }
         composable("other") {
             Other()
+        }
+        composable("auth"){
+            Auth(activity, navController)
         }
     }
 }
