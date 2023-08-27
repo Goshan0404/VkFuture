@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,6 +31,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -49,6 +50,7 @@ import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Profile
 import com.example.vkfuture.ui.stateholders.NewsViewModel
+import kotlinx.coroutines.flow.collect
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -58,21 +60,18 @@ var groups = HashMap<Int, Group>()
 
 @Composable
 fun NewsScreen(activity: ComponentActivity) {
-    val news = remember { mutableStateListOf<Item>() }
 
     val newsViewModel: NewsViewModel = ViewModelProvider(activity)[NewsViewModel::class.java]
-    newsViewModel.userAuthorizated { newsResponse, groupsResponse, profilesResponse ->
-        newsResponse.forEach {
-            news.add(it)
-        }
-        //news = newsResponse as ArrayList<Item>
-        profiles = profilesResponse
-        groups = groupsResponse
-    }
+    val posts by  newsViewModel.post.collectAsState()
+    newsViewModel.requestNews()
+
+    val news = remember { mutableStateListOf<Item>()}
+
+
 
     LazyColumn {
         items(news) { post ->
-            if (post.owner_id > 0) {
+            if (post > 0) {
                 PersonPost(post = post)
             } else {
                 GroupPost(post = post)
@@ -225,7 +224,10 @@ fun BottomPreview(){
             "175",
             Icons.Outlined.Send
         ) { /*TODO*/ }
-            Box(Modifier.fillMaxWidth().height(44.dp), contentAlignment = Alignment.CenterEnd) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(44.dp), contentAlignment = Alignment.CenterEnd) {
             Row() {
                 Icon(Icons.Filled.Person, "Просмотры")
                 Text("2556")

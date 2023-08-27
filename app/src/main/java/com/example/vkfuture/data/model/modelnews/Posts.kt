@@ -1,5 +1,5 @@
 package com.example.vkfuture.data.model.modelnews
 
-data class News(
+data class Posts(
     val response: Response
 )
