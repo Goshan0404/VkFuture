@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.Send
@@ -38,11 +39,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import coil.compose.AsyncImage
+import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Profile
@@ -171,6 +175,12 @@ private fun Post(post: Item, name: String?, photo: String?) {
                     post.reposts.count.toString() ?: "?",
                     Icons.Outlined.Send
                 ) { /*TODO*/ }
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                    Row {
+                        Icon(Icons.Filled.Person, "Просмотры")
+                        Text(post.views.count.toString())
+                    }
+                }
             }
         }
     }
@@ -197,4 +207,31 @@ private fun convertUnix(time: Int): String {
     val date = Date(time.toLong() * 1000)
     val dateFormat = SimpleDateFormat("dd MMMM kk:mm", Locale.getDefault())
     return dateFormat.format(date)
+}
+
+@Preview
+@Composable
+fun BottomPreview(){
+    Row(Modifier.padding(12.dp)) {
+        TextIconButton(
+            "15",
+            Icons.Outlined.FavoriteBorder
+        ) { /*TODO*/ }
+        Spacer(Modifier.width(8.dp))
+        TextIconButton(
+            "258",
+            Icons.Outlined.MailOutline
+        ) { /*TODO*/ }
+        Spacer(Modifier.width(8.dp))
+        TextIconButton(
+            "175",
+            Icons.Outlined.Send
+        ) { /*TODO*/ }
+            Box(Modifier.fillMaxWidth().height(44.dp), contentAlignment = Alignment.CenterEnd) {
+            Row() {
+                Icon(Icons.Filled.Person, "Просмотры")
+                Text("2556")
+            }
+        }
+    }
 }
