@@ -55,34 +55,32 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-var profiles = HashMap<Int, Profile>()
-var groups = HashMap<Int, Group>()
+/*var profiles = HashMap<Int, Profile>()
+var groups = HashMap<Int, Group>()*/
 
 @Composable
 fun NewsScreen(activity: ComponentActivity) {
-
     val newsViewModel: NewsViewModel = ViewModelProvider(activity)[NewsViewModel::class.java]
-    val posts by  newsViewModel.post.collectAsState()
+    val posts by newsViewModel.post.collectAsState()
+    val profiles by newsViewModel.profiles.collectAsState()
+    val groups by newsViewModel.groups.collectAsState()
     newsViewModel.requestNews()
 
-    val news = remember { mutableStateListOf<Item>()}
-
-
-
     LazyColumn {
-        items(news) { post ->
-            if (post > 0) {
-                PersonPost(post = post)
-            } else {
-                GroupPost(post = post)
-                Log.e("TIME", post.date.toString())
+        posts.forEach{ post ->
+            item{
+                if (post.owner_id > 0) {
+                    PersonPost(post = post, profiles)
+                } else {
+                    GroupPost(post = post, groups)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun PersonPost(post: Item) {
+private fun PersonPost(post: Item, profiles: HashMap<Int, Profile>) {
     val profile = profiles[post.owner_id]
     val name = "${profile?.first_name}  ${profile?.last_name}"
     val image = profile?.photo_100
@@ -90,7 +88,7 @@ private fun PersonPost(post: Item) {
 }
 
 @Composable
-private fun GroupPost(post: Item) {
+private fun GroupPost(post: Item, groups: HashMap<Int, Group>) {
     val group = groups[post.owner_id * -1]
     val name = group?.name
     val image = group?.photo_100
@@ -159,23 +157,23 @@ private fun Post(post: Item, name: String?, photo: String?) {
             )
             Row(Modifier.padding(12.dp)) {
                 TextIconButton(
-                    post.likes.count.toString() ?: "?",
+                    post.likes?.count.toString() ?: "?",
                     Icons.Outlined.FavoriteBorder
                 ) { /*TODO*/ }
                 Spacer(Modifier.width(8.dp))
                 TextIconButton(
-                    post.comments.count.toString() ?: "?",
+                    post.comments?.count.toString() ?: "?",
                     Icons.Outlined.MailOutline
                 ) { /*TODO*/ }
                 Spacer(Modifier.width(8.dp))
                 TextIconButton(
-                    post.reposts.count.toString() ?: "?",
+                    post.reposts?.count.toString() ?: "?",
                     Icons.Outlined.Send
                 ) { /*TODO*/ }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                     Row {
                         Icon(Icons.Filled.Person, "Просмотры")
-                        Text(post.views.count.toString())
+                        Text(post.views?.count.toString())
                     }
                 }
             }

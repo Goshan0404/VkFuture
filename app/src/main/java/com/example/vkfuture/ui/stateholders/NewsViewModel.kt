@@ -24,11 +24,11 @@ class NewsViewModel : ViewModel() {
     private val _posts = MutableStateFlow(mutableListOf<Item>())
     val post = _posts.asStateFlow()
 
-    private val _profiles = MutableStateFlow(HashMap<Int, Group>())
-    val profiles = _posts.asStateFlow()
+    private val _profiles = MutableStateFlow(HashMap<Int, Profile>())
+    val profiles = _profiles.asStateFlow()
 
-    private val _groups = MutableStateFlow(HashMap<Int, Profile>())
-    val groups = _posts.asStateFlow()
+    private val _groups = MutableStateFlow(HashMap<Int, Group>())
+    val groups = _groups.asStateFlow()
 
     val newsRepository = NewsRepository()
     fun requestNews() {
@@ -40,18 +40,14 @@ class NewsViewModel : ViewModel() {
             response.await()
 
             val result = response.getCompleted().body()!!.response
-            _posts.value = result.items as SnapshotStateList<Item>
-
-
-            val groups = HashMap<Int, Group>()
-            val profiles = HashMap<Int, Profile>()
+            _posts.value = result.items.toMutableList()
 
             result.groups.forEach {
-                groups[it.id] = it
+                _groups.value[it.id] = it
             }
 
             result.profiles.forEach {
-                profiles[it.id] = it
+                _profiles.value[it.id] = it
             }
 
         }
