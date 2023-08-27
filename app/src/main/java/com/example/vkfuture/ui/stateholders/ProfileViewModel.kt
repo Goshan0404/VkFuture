@@ -13,14 +13,15 @@ class ProfileViewModel : ViewModel() {
     val profileRepository = ProfileRepository()
     fun userAuthorisated(
         callBack : (
-            bdate : String,
+            response: com.example.vkfuture.data.model.modelprofiledetails.Response,
+            /*bdate : String,
             city : String,
             country : String,
             firstName : String,
             lastName : String,
             sex : Int,
             status : String,
-            screenName : String
+            screenName : String*/
                 )-> Unit
     ){
         viewModelScope.launch{
@@ -30,14 +31,15 @@ class ProfileViewModel : ViewModel() {
             response.await()
             val result = response.getCompleted().body()!!.response
             callBack.invoke(
-                result.bdate,
+                result,
+                /*result.bdate,
                 result.city.title,
                 result.country.title,
                 result.first_name,
                 result.last_name,
                 result.sex,
                 result.status,
-                result.screen_name
+                result.screen_name*/
             )
         }
     }
