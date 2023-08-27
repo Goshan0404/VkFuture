@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -45,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
@@ -60,15 +62,16 @@ var groups = HashMap<Int, Group>()*/
 
 @Composable
 fun NewsScreen(activity: ComponentActivity) {
-    val newsViewModel: NewsViewModel = ViewModelProvider(activity)[NewsViewModel::class.java]
+    val newsViewModel = viewModel<NewsViewModel>()
+    val state by newsViewModel.state.collectAsState()
     val posts by newsViewModel.post.collectAsState()
     val profiles by newsViewModel.profiles.collectAsState()
     val groups by newsViewModel.groups.collectAsState()
     newsViewModel.requestNews()
 
-    LazyColumn {
-        posts.forEach{ post ->
-            item{
+    if (state.isLoadedRemote) {
+        LazyColumn {
+            items(posts) { post ->
                 if (post.owner_id > 0) {
                     PersonPost(post = post, profiles)
                 } else {

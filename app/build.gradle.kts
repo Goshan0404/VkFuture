@@ -65,6 +65,7 @@ dependencies {
     implementation ("com.vk:android-sdk-api:4.1.0")
 
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation ("com.squareup.okhttp3:okhttp:4.10.0")

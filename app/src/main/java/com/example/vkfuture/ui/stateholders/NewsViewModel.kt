@@ -1,6 +1,5 @@
 package com.example.vkfuture.ui.stateholders
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vkfuture.State
@@ -21,8 +20,9 @@ class NewsViewModel : ViewModel() {
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state.asStateFlow()
 
-    private val _posts = MutableStateFlow(mutableListOf<Item>())
+    private val _posts = MutableStateFlow(listOf<Item>())
     val post = _posts.asStateFlow()
+
 
     private val _profiles = MutableStateFlow(HashMap<Int, Profile>())
     val profiles = _profiles.asStateFlow()
@@ -40,7 +40,7 @@ class NewsViewModel : ViewModel() {
             response.await()
 
             val result = response.getCompleted().body()!!.response
-            _posts.value = result.items.toMutableList()
+            _posts.value = result.items
 
             result.groups.forEach {
                 _groups.value[it.id] = it
@@ -49,9 +49,10 @@ class NewsViewModel : ViewModel() {
             result.profiles.forEach {
                 _profiles.value[it.id] = it
             }
-
+            _state.value = State(true)
         }
     }
 
 
 }
+

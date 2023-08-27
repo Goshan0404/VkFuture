@@ -1,8 +1,8 @@
 package com.example.vkfuture.data.model.modelnews
 
 data class Response(
-    val groups: List<Group>,
-    val items: List<Item>,
+    val groups: ArrayList<Group>,
+    val items: ArrayList<Item>,
     val next_from: String,
-    val profiles: List<Profile>
+    val profiles: ArrayList<Profile>
 )
