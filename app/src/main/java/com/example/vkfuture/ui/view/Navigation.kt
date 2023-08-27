@@ -20,8 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.vkfuture.ui.model.BottomNavItem
-import com.example.vkfuture.ui.view.messages.Messages
-import com.example.vkfuture.ui.view.news.News
+import com.example.vkfuture.ui.view.messages.MessagesScreen
+import com.example.vkfuture.ui.view.news.NewsScreen
 
 
 @Composable
@@ -32,13 +32,13 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, a
         Modifier.padding(paddingValues)
     ) {
         composable("news") {
-            News(activity)
+            NewsScreen(activity)
         }
         composable("messages") {
-            Messages()
+            MessagesScreen()
         }
         composable("other") {
-            Other(activity)
+            OtherScreen(activity)
         }
         composable("auth"){
             Auth(activity, navController)

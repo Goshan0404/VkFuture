@@ -24,17 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import coil.compose.AsyncImage
 import com.example.vkfuture.R
 import com.example.vkfuture.ui.stateholders.ProfileViewModel
 
 @Composable
-fun Other(activity: ComponentActivity) {
+fun OtherScreen(activity: ComponentActivity) {
     val profileViewModel: ProfileViewModel = ViewModelProvider(activity)[ProfileViewModel::class.java]
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }

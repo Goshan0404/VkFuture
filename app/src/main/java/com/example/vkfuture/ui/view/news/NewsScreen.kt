@@ -39,14 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import coil.compose.AsyncImage
-import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Profile
@@ -59,7 +57,7 @@ var profiles = HashMap<Int, Profile>()
 var groups = HashMap<Int, Group>()
 
 @Composable
-fun News(activity: ComponentActivity) {
+fun NewsScreen(activity: ComponentActivity) {
     val news = remember { mutableStateListOf<Item>() }
 
     val newsViewModel: NewsViewModel = ViewModelProvider(activity)[NewsViewModel::class.java]
