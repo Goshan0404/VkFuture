@@ -160,17 +160,17 @@ private fun Post(post: Item, name: String?, photo: String?) {
             )
             Row(Modifier.padding(12.dp)) {
                 TextIconButton(
-                    post.likes?.count.toString() ?: "?",
+                    post.likes?.count.toString(),
                     Icons.Outlined.FavoriteBorder
                 ) { /*TODO*/ }
                 Spacer(Modifier.width(8.dp))
                 TextIconButton(
-                    post.comments?.count.toString() ?: "?",
+                    post.comments?.count.toString(),
                     Icons.Outlined.MailOutline
                 ) { /*TODO*/ }
                 Spacer(Modifier.width(8.dp))
                 TextIconButton(
-                    post.reposts?.count.toString() ?: "?",
+                    post.reposts?.count.toString(),
                     Icons.Outlined.Send
                 ) { /*TODO*/ }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {

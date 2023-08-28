@@ -3,7 +3,7 @@ package com.example.vkfuture.ui.view
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import com.example.vkfuture.data.model.modelnews.Token
+import com.example.vkfuture.data.model.Token
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope

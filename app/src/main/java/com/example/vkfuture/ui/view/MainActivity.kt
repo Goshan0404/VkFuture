@@ -19,20 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.vkfuture.R
-import com.example.vkfuture.data.model.modelnews.Token
 import com.example.vkfuture.ui.model.BottomNavItem
-import com.example.vkfuture.ui.stateholders.NewsViewModel
 import com.example.vkfuture.ui.theme.VkFutureTheme
-import com.vk.api.sdk.VK
-import com.vk.api.sdk.auth.VKAuthenticationResult
-import com.vk.api.sdk.auth.VKScope
 import com.vk.api.sdk.auth.VKScope.*
-import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {

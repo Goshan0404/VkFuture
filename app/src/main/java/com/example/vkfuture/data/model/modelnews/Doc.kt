@@ -7,7 +7,6 @@ data class Doc(
     val id: Int,
     val is_unsafe: Int,
     val owner_id: Int,
-    val preview: Preview,
     val size: Int,
     val title: String,
     val type: Int,

@@ -35,7 +35,7 @@ class NewsViewModel : ViewModel() {
 
         viewModelScope.launch {
             val response: Deferred<Response<Posts>> = async {
-                newsRepository.getNews("Post")
+                newsRepository.getNews("post")
             }
             response.await()
 
