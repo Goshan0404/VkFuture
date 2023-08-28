@@ -2,6 +2,7 @@ package com.example.vkfuture.ui.view.news
 
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +16,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -50,14 +53,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Profile
@@ -145,7 +151,8 @@ private fun Post(post: Item, name: String?, photo: String?) {
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp,
-                        maxLines = 1
+                        maxLines = 1,
+                        modifier = Modifier.widthIn(max=224.dp)
                     )
                     Text(
                         convertUnix(post.date),
@@ -153,7 +160,7 @@ private fun Post(post: Item, name: String?, photo: String?) {
                         fontSize = 12.sp
                     )
                 }
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+                Box(Modifier.fillMaxWidth().defaultMinSize(minWidth = 24.dp), contentAlignment = Alignment.TopEnd) {
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(Icons.Filled.MoreVert, contentDescription = "Больше")
                     }
@@ -243,4 +250,3 @@ fun BottomPreview() {
         }
     }
 }
-
