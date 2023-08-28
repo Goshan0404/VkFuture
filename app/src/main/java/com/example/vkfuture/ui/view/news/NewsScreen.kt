@@ -7,8 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,12 +27,18 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.Send
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,9 +47,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +78,6 @@ fun NewsScreen(activity: ComponentActivity) {
     val profiles by newsViewModel.profiles.collectAsState()
     val groups by newsViewModel.groups.collectAsState()
     newsViewModel.requestNews()
-
     if (state.isLoadedRemote) {
         LazyColumn {
             items(posts) { post ->
@@ -106,7 +115,7 @@ private fun Post(post: Item, name: String?, photo: String?) {
                 .fillMaxWidth()
                 .background(
                     color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(size = 12.dp)
+                    //shape = RoundedCornerShape(size = 12.dp)
                 )
                 .padding(4.dp) // TODO: ПОДУМАТЬ
         ) {
@@ -160,23 +169,25 @@ private fun Post(post: Item, name: String?, photo: String?) {
             )
             Row(Modifier.padding(12.dp)) {
                 TextIconButton(
-                    post.likes?.count.toString(),
-                    Icons.Outlined.FavoriteBorder
+                    post.likes.count.toString(),
+                    Icons.Outlined.FavoriteBorder,
+                    post.likes.user_likes == 1
                 ) { /*TODO*/ }
                 Spacer(Modifier.width(8.dp))
                 TextIconButton(
-                    post.comments?.count.toString(),
+                    post.comments.count.toString(),
                     Icons.Outlined.MailOutline
                 ) { /*TODO*/ }
                 Spacer(Modifier.width(8.dp))
                 TextIconButton(
-                    post.reposts?.count.toString(),
+                    post.reposts.count.toString(),
                     Icons.Outlined.Send
                 ) { /*TODO*/ }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                    Row {
+                    Row(Modifier.padding(12.dp)) {
                         Icon(Icons.Filled.Person, "Просмотры")
-                        Text(post.views?.count.toString())
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(post.views.count.toString())
                     }
                 }
             }
@@ -185,20 +196,18 @@ private fun Post(post: Item, name: String?, photo: String?) {
 }
 
 @Composable
-private fun TextIconButton(
-    text: String, icon: ImageVector, onClick: () -> Unit
-) {
-    Surface(
-        color = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        modifier = Modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(100.dp)
+private fun TextIconButton(text: String, icon: ImageVector, used: Boolean = false, onClick: () -> Unit) {
+    FilledTonalButton(
+        onClick = onClick,
+        Modifier.defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+        contentPadding = PaddingValues(8.dp),
+        colors = if(used) ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer) else ButtonDefaults.buttonColors()
     ) {
-        Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = icon, contentDescription = text, Modifier.padding(4.dp))
-            Text(text, fontSize = 18.sp, modifier = Modifier.padding(end = 4.dp))
-        }
+        Icon(icon, "", Modifier.size(ButtonDefaults.IconSize))
+        Spacer(Modifier.size(4.dp))
+        Text(text, maxLines = 1)
     }
+
 }
 
 private fun convertUnix(time: Int): String {
@@ -209,30 +218,29 @@ private fun convertUnix(time: Int): String {
 
 @Preview
 @Composable
-fun BottomPreview(){
+fun BottomPreview() {
     Row(Modifier.padding(12.dp)) {
         TextIconButton(
             "15",
-            Icons.Outlined.FavoriteBorder
+            Icons.Outlined.FavoriteBorder,
+            true
         ) { /*TODO*/ }
         Spacer(Modifier.width(8.dp))
         TextIconButton(
             "258",
-            Icons.Outlined.MailOutline
+            Icons.Outlined.MailOutline,
         ) { /*TODO*/ }
         Spacer(Modifier.width(8.dp))
         TextIconButton(
             "175",
-            Icons.Outlined.Send
+            Icons.Outlined.Send,
         ) { /*TODO*/ }
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(44.dp), contentAlignment = Alignment.CenterEnd) {
-            Row() {
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+            Row(Modifier.padding(12.dp)) {
                 Icon(Icons.Filled.Person, "Просмотры")
                 Text("2556")
             }
         }
     }
 }
+
