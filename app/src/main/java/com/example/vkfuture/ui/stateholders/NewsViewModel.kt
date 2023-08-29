@@ -7,6 +7,7 @@ import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Posts
 import com.example.vkfuture.data.model.modelnews.Profile
+import com.example.vkfuture.data.repository.LikesRepository
 import com.example.vkfuture.data.repository.NewsRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -19,8 +20,8 @@ import retrofit2.Response
 
 class NewsViewModel : ViewModel() {
 
-    private val _Load_state = MutableStateFlow(LoadState())
-    val loadState: StateFlow<LoadState> = _Load_state.asStateFlow()
+    private val _loadState = MutableStateFlow(LoadState())
+    val loadState: StateFlow<LoadState> = _loadState.asStateFlow()
 
     private val _posts = MutableStateFlow(listOf<Item>())
     val post = _posts.asStateFlow()
@@ -31,17 +32,20 @@ class NewsViewModel : ViewModel() {
     private val _groups = MutableStateFlow(HashMap<Int, Group>())
     val groups = _groups.asStateFlow()
 
-    val newsRepository = NewsRepository()
+    private val newsRepository = NewsRepository()
+    private val likesRepository = LikesRepository()
+
+    private val dispatcherIo = Dispatchers.IO
 
     init {
         requestNews()
     }
 
     fun requestNews() {
-        _Load_state.value = LoadState(isLoading = true)
+        _loadState.value = LoadState(isLoading = true)
 
         viewModelScope.launch {
-            val response: Deferred<Response<Posts>> = async(Dispatchers.IO) {
+            val response: Deferred<Response<Posts>> = async(dispatcherIo) {
                 newsRepository.getNews("post")
             }
             response.await()
@@ -49,7 +53,7 @@ class NewsViewModel : ViewModel() {
             val result = response.getCompleted().body()!!.response
 
             setProperties(result)
-            _Load_state.value = LoadState(isLoading = false)
+            _loadState.value = LoadState(isLoading = false)
         }
     }
 
@@ -62,6 +66,19 @@ class NewsViewModel : ViewModel() {
 
         result.profiles.forEach {
             _profiles.value[it.id] = it
+        }
+    }
+
+    fun userLikeChanged(status: Int, type: String, itemId: String) {
+
+        if (status == 0) {
+            viewModelScope.launch(dispatcherIo) {
+                likesRepository.addLike(type, itemId)
+            }
+        } else {
+            viewModelScope.launch {
+                likesRepository.deleteLike(type, itemId)
+            }
         }
     }
 }

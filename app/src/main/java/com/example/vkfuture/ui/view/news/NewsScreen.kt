@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.vkfuture.LoadState
 import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
@@ -81,20 +82,36 @@ fun NewsScreen() {
     val profiles by newsViewModel.profiles.collectAsState()
     val groups by newsViewModel.groups.collectAsState()
 
+    setScreen(newsViewModel, state, posts, profiles, groups)
+
+}
+
+
+
+@Composable
+private fun setScreen(
+    newsViewModel: NewsViewModel,
+    state: LoadState,
+    posts: List<Item>,
+    profiles: HashMap<Int, Profile>,
+    groups: HashMap<Int, Group>
+) {
     val refresh = rememberSwipeRefreshState(isRefreshing = false)
-    SwipeRefresh(state = refresh, onRefresh = {newsViewModel.requestNews()}) {
+    SwipeRefresh(state = refresh, onRefresh = { newsViewModel.requestNews() }) {
         if (state.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
         } else {
-            setPosts(posts, profiles, groups)
+            SetPosts(posts, profiles, groups, newsViewModel)
         }
     }
 
+    setAddPostButton()
+}
 
-
-
+@Composable
+private fun setAddPostButton() {
     Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.fillMaxSize(1f)) {
         FloatingActionButton(onClick = { /*TODO*/ }, Modifier.padding(16.dp)) {
             Icon(Icons.Filled.Add, "Добавить пост")
@@ -103,41 +120,42 @@ fun NewsScreen() {
 }
 
 @Composable
-private fun setPosts(
+private fun SetPosts(
     posts: List<Item>,
     profiles: HashMap<Int, Profile>,
-    groups: HashMap<Int, Group>
+    groups: HashMap<Int, Group>,
+    newsViewModel: NewsViewModel
 ) {
     LazyColumn(state = rememberLazyListState()) {
         items(posts) { post ->
             if (post.owner_id > 0) {
-                PersonPost(post = post, profiles)
+                PersonPost(post = post, profiles, newsViewModel)
             } else {
-                GroupPost(post = post, groups)
+                GroupPost(post = post, groups, newsViewModel)
             }
         }
     }
 }
 
 @Composable
-private fun PersonPost(post: Item, profiles: HashMap<Int, Profile>) {
+private fun PersonPost(post: Item, profiles: HashMap<Int, Profile>, newsViewModel: NewsViewModel) {
     val profile = profiles[post.owner_id]
     val name = "${profile?.first_name}  ${profile?.last_name}"
     val image = profile?.photo_100
-    Post(post = post, name = name, photo = image)
+    Post(post = post, name = name, photo = image, newsViewModel)
 }
 
 @Composable
-private fun GroupPost(post: Item, groups: HashMap<Int, Group>) {
+private fun GroupPost(post: Item, groups: HashMap<Int, Group>, newsViewModel: NewsViewModel) {
     val group = groups[post.owner_id * -1]
     val name = group?.name
     val image = group?.photo_100
-    Post(post = post, name = name, photo = image)
+    Post(post = post, name = name, photo = image, newsViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Post(post: Item, name: String?, photo: String?) {
+private fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel) {
     var isDropdownState by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     MaterialTheme {
@@ -216,18 +234,29 @@ private fun Post(post: Item, name: String?, photo: String?) {
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp
             )
+
+            var isUserLiked by remember { mutableStateOf(post.likes.user_likes) }
+
             Row(Modifier.padding(12.dp)) {
                 TextIconButton(
                     post.likes.count.toString(),
                     Icons.Outlined.FavoriteBorder,
                     post.likes.user_likes == 1
-                ) { /*TODO*/ }
+                ) {
+                    if (isUserLiked == 1) isUserLiked = 0
+                    else isUserLiked = 1
+                newsViewModel.userLikeChanged()
+                }
+
                 Spacer(Modifier.width(8.dp))
+
                 TextIconButton(
                     post.comments.count.toString(),
                     Icons.Outlined.MailOutline
                 ) { Log.d("PICTURES", post.attachments.toString()) }
+
                 Spacer(Modifier.width(8.dp))
+
                 TextIconButton(
                     post.reposts.count.toString(),
                     Icons.Outlined.Send
@@ -292,8 +321,11 @@ private fun TextIconButton(
     used: Boolean = false,
     onClick: () -> Unit
 ) {
+
+
     FilledTonalButton(
-        onClick = onClick,
+        onClick = { onClick.invoke()
+                  },
         Modifier.defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
         contentPadding = PaddingValues(8.dp),
         colors = if (used) ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer) else ButtonDefaults.buttonColors()

@@ -16,4 +16,16 @@ interface RetrofitApi {
     @GET("account.getProfileInfo")
     suspend fun getProfileDetails(@Query("access_token") token : String,
                                   @Query("v") v : String = "5.131") : Response<ProfileDetails>
+
+    @GET("likes.add")
+    suspend fun addLike(@Query("access_token") token : String,
+                        @Query("type") type: String,
+                        @Query("item_id") itemId: String,
+                        @Query("v") v : String = "5.131")
+
+    @GET("likes.delete")
+    suspend fun deleteLike(@Query("access_token") token : String,
+                        @Query("type") type: String,
+                        @Query("item_id") itemId: String,
+                        @Query("v") v : String = "5.131")
 }
