@@ -1,4 +1,4 @@
-package com.example.vkfuture.data.model
+package com.example.vkfuture.utils
 
 object Token {
     lateinit var accessToken: String

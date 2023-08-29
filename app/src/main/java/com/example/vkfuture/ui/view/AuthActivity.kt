@@ -3,7 +3,7 @@ package com.example.vkfuture.ui.view
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import com.example.vkfuture.data.model.Token
+import com.example.vkfuture.utils.Token
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope
@@ -33,7 +33,7 @@ class AuthActivity: ComponentActivity() {
                     }
                 }
             }
-            authLauncher.launch(arrayListOf(VKScope.WALL, VKScope.PHOTOS, VKScope.FRIENDS, VKScope.OFFLINE))
+            authLauncher.launch(arrayListOf(VKScope.WALL, VKScope.PHOTOS, VKScope.FRIENDS))
         } else {
             Token.setToken(token, user_id)
             startActivity(Intent(this, MainActivity::class.java))

@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,6 +66,8 @@ import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Profile
 import com.example.vkfuture.ui.stateholders.NewsViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -72,25 +75,45 @@ import java.util.Locale
 @Composable
 fun NewsScreen(activity: ComponentActivity) {
     val newsViewModel = viewModel<NewsViewModel>()
-    val state by newsViewModel.state.collectAsState()
+    val state by newsViewModel.loadState.collectAsState()
     val posts by newsViewModel.post.collectAsState()
     val profiles by newsViewModel.profiles.collectAsState()
     val groups by newsViewModel.groups.collectAsState()
-    newsViewModel.requestNews()
-    if (state.isLoadedRemote) {
-        LazyColumn {
-            items(posts) { post ->
-                if (post.owner_id > 0) {
-                    PersonPost(post = post, profiles)
-                } else {
-                    GroupPost(post = post, groups)
-                }
+
+    val refresh = rememberSwipeRefreshState(isRefreshing = false)
+    SwipeRefresh(state = refresh, onRefresh = {newsViewModel.requestNews()}) {
+        if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
+        } else {
+            setPosts(posts, profiles, groups)
         }
     }
+
+
+
+
     Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.fillMaxSize(1f)) {
         FloatingActionButton(onClick = { /*TODO*/ }, Modifier.padding(16.dp)) {
             Icon(Icons.Filled.Add, "Добавить пост")
+        }
+    }
+}
+
+@Composable
+private fun setPosts(
+    posts: List<Item>,
+    profiles: HashMap<Int, Profile>,
+    groups: HashMap<Int, Group>
+) {
+    LazyColumn {
+        items(posts) { post ->
+            if (post.owner_id > 0) {
+                PersonPost(post = post, profiles)
+            } else {
+                GroupPost(post = post, groups)
+            }
         }
     }
 }
@@ -114,8 +137,8 @@ private fun GroupPost(post: Item, groups: HashMap<Int, Group>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Post(post: Item, name: String?, photo: String?) {
-    var dropdownState by remember { mutableStateOf(false) }
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var isDropdownState by remember { mutableStateOf(false) }
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
     MaterialTheme {
         Card(
             modifier = Modifier
@@ -167,16 +190,16 @@ private fun Post(post: Item, name: String?, photo: String?) {
                         .defaultMinSize(minWidth = 24.dp), contentAlignment = Alignment.TopEnd
                 ) {
                     IconButton(onClick = {
-                        dropdownState = true; Log.d(
+                        isDropdownState = true; Log.d(
                         "dropdownstate",
-                        dropdownState.toString()
+                        isDropdownState.toString()
                     )
                     }) {
                         Icon(Icons.Filled.MoreVert, contentDescription = "Больше")
                     }
                     DropdownMenu(
-                        expanded = dropdownState,
-                        onDismissRequest = { dropdownState = false }) {
+                        expanded = isDropdownState,
+                        onDismissRequest = { isDropdownState = false }) {
                         DropdownMenuItem(text = { Text("А ПОЧЕМУ") }, onClick = { /*TODO*/ })
                         DropdownMenuItem(text = { Text("Я ВСЕГДА") }, onClick = { /*TODO*/ })
                         DropdownMenuItem(text = { Text("ДЕЛАЮ ВСЁ") }, onClick = { /*TODO*/ })
@@ -207,7 +230,7 @@ private fun Post(post: Item, name: String?, photo: String?) {
                 TextIconButton(
                     post.reposts.count.toString(),
                     Icons.Outlined.Send
-                ) { showBottomSheet = true }
+                ) { isBottomSheetVisible = true }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                     Row(Modifier.padding(12.dp)) {
                         Icon(Icons.Filled.Person, "Просмотры")
@@ -217,8 +240,8 @@ private fun Post(post: Item, name: String?, photo: String?) {
                 }
             }
         }
-        if (showBottomSheet) {
-            ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, Modifier.padding()) {
+        if (isBottomSheetVisible) {
+            ModalBottomSheet(onDismissRequest = { isBottomSheetVisible = false }, Modifier.padding()) {
                 TextField(value = "", onValueChange = {}, modifier = Modifier.fillMaxWidth(), placeholder = {Text("Поиск диалогов")})
                 LazyRow(){
                     items(5){

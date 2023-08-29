@@ -1,6 +1,6 @@
 package com.example.vkfuture.data.repository
 
-import com.example.vkfuture.data.model.Token
+import com.example.vkfuture.utils.Token
 import com.example.vkfuture.data.model.modelnews.Posts
 
 import com.example.vkfuture.data.retrofit.RetrofitClient
