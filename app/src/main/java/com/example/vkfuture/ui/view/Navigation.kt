@@ -32,7 +32,7 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, a
         Modifier.padding(paddingValues)
     ) {
         composable("news") {
-            NewsScreen(activity)
+            NewsScreen()
         }
         composable("messages") {
             MessagesScreen()

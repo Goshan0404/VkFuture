@@ -82,5 +82,8 @@ fun OtherScreen(activity: ComponentActivity) {
                 }
             }
         }
+        items(100){
+            Text(it.toString())
+        }
     }
 }

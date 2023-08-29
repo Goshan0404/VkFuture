@@ -1,7 +1,6 @@
 package com.example.vkfuture.ui.view.news
 
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,11 +21,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.Send
@@ -73,7 +74,7 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun NewsScreen(activity: ComponentActivity) {
+fun NewsScreen() {
     val newsViewModel = viewModel<NewsViewModel>()
     val state by newsViewModel.loadState.collectAsState()
     val posts by newsViewModel.post.collectAsState()
@@ -107,7 +108,7 @@ private fun setPosts(
     profiles: HashMap<Int, Profile>,
     groups: HashMap<Int, Group>
 ) {
-    LazyColumn {
+    LazyColumn(state = rememberLazyListState()) {
         items(posts) { post ->
             if (post.owner_id > 0) {
                 PersonPost(post = post, profiles)
@@ -225,7 +226,7 @@ private fun Post(post: Item, name: String?, photo: String?) {
                 TextIconButton(
                     post.comments.count.toString(),
                     Icons.Outlined.MailOutline
-                ) { /*TODO*/ }
+                ) { Log.d("PICTURES", post.attachments.toString()) }
                 Spacer(Modifier.width(8.dp))
                 TextIconButton(
                     post.reposts.count.toString(),
@@ -242,9 +243,14 @@ private fun Post(post: Item, name: String?, photo: String?) {
         }
         if (isBottomSheetVisible) {
             ModalBottomSheet(onDismissRequest = { isBottomSheetVisible = false }, Modifier.padding()) {
-                TextField(value = "", onValueChange = {}, modifier = Modifier.fillMaxWidth(), placeholder = {Text("Поиск диалогов")})
-                LazyRow(){
-                    items(5){
+                TextField(
+                    value = "",
+                    onValueChange = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Поиск диалогов") },
+                    leadingIcon = { Icon(Icons.Filled.Search, "Поиск диалогов") })
+                LazyRow() {
+                    items(5) {
                         Image(
                             painter = painterResource(id = R.drawable.gosha),
                             contentDescription = "Avatar",
@@ -255,9 +261,14 @@ private fun Post(post: Item, name: String?, photo: String?) {
                         )
                     }
                 }
-                TextField(value="", onValueChange = {}, modifier = Modifier.fillMaxWidth(), placeholder = {Text("Сообщение")})
-                LazyRow(){
-                    items(5){
+                TextField(
+                    value = "",
+                    onValueChange = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Сообщение") },
+                    leadingIcon = { Icon(Icons.Outlined.MailOutline, "Сообщение") })
+                LazyRow() {
+                    items(5) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
                             contentDescription = "Avatar",
@@ -301,6 +312,6 @@ private fun convertUnix(time: Int): String { // TODO: ВЫНЕСТИ КУДА-Н
 }
 
 @Composable
-fun repostBottomSheet(){ // TODO: СДЕЛАТЬ
+fun repostBottomSheet() { // TODO: СДЕЛАТЬ
 
 }
