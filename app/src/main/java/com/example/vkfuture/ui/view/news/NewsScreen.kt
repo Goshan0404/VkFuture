@@ -245,8 +245,8 @@ private fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsV
                     Icons.Outlined.FavoriteBorder,
                     isUserLiked == 1
                 ) {
-                    if (isUserLiked == 1) {isUserLiked = 0; likesCount -= 1}
-                    else {isUserLiked = 1; likesCount += 1}
+                    if (isUserLiked == 1) {isUserLiked = 0; likesCount -= 1; post.likes.user_likes = 0; post.likes.count -=1}
+                    else {isUserLiked = 1; likesCount += 1; post.likes.user_likes = 1; post.likes.count += 1}
 
                     newsViewModel.userLikeChanged(isUserLiked,
                         post.type,
@@ -328,7 +328,6 @@ private fun TextIconButton(
     onClick: () -> Unit
 ) {
 
-//    val color by remember { mutableStateOf() }
     FilledTonalButton(
         onClick = { onClick.invoke()
                   },
