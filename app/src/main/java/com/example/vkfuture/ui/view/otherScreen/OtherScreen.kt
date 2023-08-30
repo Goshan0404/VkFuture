@@ -1,4 +1,4 @@
-package com.example.vkfuture.ui.view
+package com.example.vkfuture.ui.view.otherScreen
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image

@@ -1,8 +1,10 @@
-package com.example.vkfuture.ui.view
+package com.example.vkfuture.ui.view.authScreen
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import com.example.vkfuture.ui.view.MainActivity
+import com.example.vkfuture.ui.view.PreferenceManager
 import com.example.vkfuture.utils.Token
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult

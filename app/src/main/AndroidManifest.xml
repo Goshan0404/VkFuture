@@ -20,7 +20,7 @@
             android:theme="@style/Theme.VkFuture">
         </activity>
 
-        <activity android:name=".ui.view.AuthActivity"
+        <activity android:name=".ui.view.authScreen.AuthActivity"
             android:theme="@style/Theme.VkFuture"
             android:exported="true">
             <intent-filter>

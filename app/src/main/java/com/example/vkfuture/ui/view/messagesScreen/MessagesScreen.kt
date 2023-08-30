@@ -1,4 +1,4 @@
-package com.example.vkfuture.ui.view.messages
+package com.example.vkfuture.ui.view.messagesScreen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image

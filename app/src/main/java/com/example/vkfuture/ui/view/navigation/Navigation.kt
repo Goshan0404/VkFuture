@@ -1,4 +1,4 @@
-package com.example.vkfuture.ui.view
+package com.example.vkfuture.ui.view.navigation
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
@@ -20,8 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.vkfuture.ui.model.BottomNavItem
-import com.example.vkfuture.ui.view.messages.MessagesScreen
-import com.example.vkfuture.ui.view.news.NewsScreen
+import com.example.vkfuture.ui.view.otherScreen.OtherScreen
+import com.example.vkfuture.ui.view.messagesScreen.MessagesScreen
+import com.example.vkfuture.ui.view.newsScreen.NewsScreen
 
 
 @Composable
@@ -39,9 +40,6 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, a
         }
         composable("other") {
             OtherScreen(activity)
-        }
-        composable("auth"){
-            Auth(activity, navController)
         }
     }
 }

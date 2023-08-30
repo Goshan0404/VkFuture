@@ -23,6 +23,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.vkfuture.ui.model.BottomNavItem
 import com.example.vkfuture.ui.theme.VkFutureTheme
+import com.example.vkfuture.ui.view.navigation.BottomNavBar
+import com.example.vkfuture.ui.view.navigation.Navigation
 import com.vk.api.sdk.auth.VKScope.*
 
 @OptIn(ExperimentalMaterial3Api::class)
