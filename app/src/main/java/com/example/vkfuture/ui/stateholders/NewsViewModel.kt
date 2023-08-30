@@ -2,7 +2,7 @@ package com.example.vkfuture.ui.stateholders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.vkfuture.LoadState
+import com.example.vkfuture.ui.model.LoadState
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Posts
@@ -69,15 +69,15 @@ class NewsViewModel : ViewModel() {
         }
     }
 
-    fun userLikeChanged(status: Int, type: String, itemId: String) {
+    fun userLikeChanged(status: Int, type: String, itemId: String, ownerId: String) {
 
-        if (status == 0) {
+        if (status == 1) {
             viewModelScope.launch(dispatcherIo) {
-                likesRepository.addLike(type, itemId)
+                likesRepository.addLike(type, itemId, ownerId)
             }
         } else {
             viewModelScope.launch {
-                likesRepository.deleteLike(type, itemId)
+                likesRepository.deleteLike(type, itemId, ownerId)
             }
         }
     }

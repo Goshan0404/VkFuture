@@ -62,7 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.vkfuture.LoadState
+import com.example.vkfuture.ui.model.LoadState
 import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
@@ -245,7 +245,11 @@ private fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsV
                 ) {
                     if (isUserLiked == 1) isUserLiked = 0
                     else isUserLiked = 1
-                newsViewModel.userLikeChanged()
+
+                newsViewModel.userLikeChanged(isUserLiked,
+                    post.type,
+                    post.id.toString(),
+                    post.owner_id.toString())
                 }
 
                 Spacer(Modifier.width(8.dp))
@@ -322,7 +326,7 @@ private fun TextIconButton(
     onClick: () -> Unit
 ) {
 
-
+//    val color by remember { mutableStateOf() }
     FilledTonalButton(
         onClick = { onClick.invoke()
                   },

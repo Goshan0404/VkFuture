@@ -1,4 +1,4 @@
-package com.example.vkfuture
+package com.example.vkfuture.ui.model
 
 data class LoadState (
     val isLoading: Boolean = false,
