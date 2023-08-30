@@ -3,6 +3,8 @@ package com.example.vkfuture.ui.view.news
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +24,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
@@ -43,6 +47,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -75,8 +80,8 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun NewsScreen() {
-    val newsViewModel = viewModel<NewsViewModel>()
+fun NewsScreen(newsViewModel: NewsViewModel = viewModel()) {
+
     val state by newsViewModel.loadState.collectAsState()
     val posts by newsViewModel.post.collectAsState()
     val profiles by newsViewModel.profiles.collectAsState()
@@ -85,8 +90,6 @@ fun NewsScreen() {
     setScreen(newsViewModel, state, posts, profiles, groups)
 
 }
-
-
 
 @Composable
 private fun setScreen(
@@ -98,16 +101,38 @@ private fun setScreen(
 ) {
     val refresh = rememberSwipeRefreshState(isRefreshing = false)
     SwipeRefresh(state = refresh, onRefresh = { newsViewModel.requestNews() }) {
+
         if (state.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            setLoadingScreen()
+        } else if (state.isError) {
+            setErrorScreen()
         } else {
             SetPosts(posts, profiles, groups, newsViewModel)
         }
     }
 
     setAddPostButton()
+}
+
+@Composable
+private fun setLoadingScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun setErrorScreen() {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Snackbar(Modifier.padding(start = 5.dp, end = 5.dp, bottom = 30.dp)) {
+            Text("Ошибка загрузки", fontSize = 22.sp)
+        }
+    }
 }
 
 @Composable
@@ -245,13 +270,20 @@ private fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsV
                     Icons.Outlined.FavoriteBorder,
                     isUserLiked == 1
                 ) {
-                    if (isUserLiked == 1) {isUserLiked = 0; likesCount -= 1; post.likes.user_likes = 0; post.likes.count -=1}
-                    else {isUserLiked = 1; likesCount += 1; post.likes.user_likes = 1; post.likes.count += 1}
+                    if (isUserLiked == 1) {
+                        isUserLiked = 0; likesCount -= 1; post.likes.user_likes =
+                            0; post.likes.count -= 1
+                    } else {
+                        isUserLiked = 1; likesCount += 1; post.likes.user_likes =
+                            1; post.likes.count += 1
+                    }
 
-                    newsViewModel.userLikeChanged(isUserLiked,
+                    newsViewModel.userLikeChanged(
+                        isUserLiked,
                         post.type,
                         post.id.toString(),
-                        post.owner_id.toString())
+                        post.owner_id.toString()
+                    )
                 }
 
                 Spacer(Modifier.width(8.dp))
@@ -277,7 +309,10 @@ private fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsV
             }
         }
         if (isBottomSheetVisible) {
-            ModalBottomSheet(onDismissRequest = { isBottomSheetVisible = false }, Modifier.padding()) {
+            ModalBottomSheet(
+                onDismissRequest = { isBottomSheetVisible = false },
+                Modifier.padding()
+            ) {
                 TextField(
                     value = "",
                     onValueChange = {},
@@ -329,8 +364,9 @@ private fun TextIconButton(
 ) {
 
     FilledTonalButton(
-        onClick = { onClick.invoke()
-                  },
+        onClick = {
+            onClick.invoke()
+        },
         Modifier.defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
         contentPadding = PaddingValues(8.dp),
         colors = if (used) ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer) else ButtonDefaults.buttonColors()

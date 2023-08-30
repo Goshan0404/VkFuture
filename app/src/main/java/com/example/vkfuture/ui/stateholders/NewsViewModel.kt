@@ -1,5 +1,6 @@
 package com.example.vkfuture.ui.stateholders
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vkfuture.ui.model.LoadState
@@ -9,6 +10,7 @@ import com.example.vkfuture.data.model.modelnews.Posts
 import com.example.vkfuture.data.model.modelnews.Profile
 import com.example.vkfuture.data.repository.LikesRepository
 import com.example.vkfuture.data.repository.NewsRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -37,6 +39,11 @@ class NewsViewModel : ViewModel() {
 
     private val dispatcherIo = Dispatchers.IO
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _loadState.value = LoadState(isError = true)
+        Log.d("NewsViewModel", "Error: ${throwable.message}")
+    }
+
     init {
         requestNews()
     }
@@ -44,7 +51,7 @@ class NewsViewModel : ViewModel() {
     fun requestNews() {
         _loadState.value = LoadState(isLoading = true)
 
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherIo + exceptionHandler) {
             val response: Deferred<Response<Posts>> = async(dispatcherIo) {
                 newsRepository.getNews("post")
             }
@@ -72,11 +79,11 @@ class NewsViewModel : ViewModel() {
     fun userLikeChanged(status: Int, type: String, itemId: String, ownerId: String) {
 
         if (status == 1) {
-            viewModelScope.launch(dispatcherIo) {
+            viewModelScope.launch(dispatcherIo + exceptionHandler) {
                 likesRepository.addLike(type, itemId, ownerId)
             }
         } else {
-            viewModelScope.launch {
+            viewModelScope.launch(dispatcherIo + exceptionHandler) {
                 likesRepository.deleteLike(type, itemId, ownerId)
             }
         }
