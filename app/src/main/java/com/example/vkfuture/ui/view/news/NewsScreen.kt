@@ -62,11 +62,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.vkfuture.ui.model.LoadState
 import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Profile
+import com.example.vkfuture.ui.model.LoadState
 import com.example.vkfuture.ui.stateholders.NewsViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -158,6 +158,8 @@ private fun GroupPost(post: Item, groups: HashMap<Int, Group>, newsViewModel: Ne
 private fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel) {
     var isDropdownState by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var isUserLiked by remember { mutableStateOf(post.likes.user_likes) }
+    var likesCount by remember { mutableStateOf(post.likes.count) }
     MaterialTheme {
         Card(
             modifier = Modifier
@@ -235,21 +237,21 @@ private fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsV
                 fontSize = 16.sp
             )
 
-            var isUserLiked by remember { mutableStateOf(post.likes.user_likes) }
+
 
             Row(Modifier.padding(12.dp)) {
                 TextIconButton(
-                    post.likes.count.toString(),
+                    likesCount.toString(),
                     Icons.Outlined.FavoriteBorder,
-                    post.likes.user_likes == 1
+                    isUserLiked == 1
                 ) {
-                    if (isUserLiked == 1) isUserLiked = 0
-                    else isUserLiked = 1
+                    if (isUserLiked == 1) {isUserLiked = 0; likesCount -= 1}
+                    else {isUserLiked = 1; likesCount += 1}
 
-                newsViewModel.userLikeChanged(isUserLiked,
-                    post.type,
-                    post.id.toString(),
-                    post.owner_id.toString())
+                    newsViewModel.userLikeChanged(isUserLiked,
+                        post.type,
+                        post.id.toString(),
+                        post.owner_id.toString())
                 }
 
                 Spacer(Modifier.width(8.dp))
