@@ -1,6 +1,7 @@
 package com.example.vkfuture.ui.view.post
 
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -40,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.vkfuture.R
+import com.example.vkfuture.data.model.modelnews.Attachment
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.ui.stateholders.NewsViewModel
 import java.text.SimpleDateFormat
@@ -62,8 +66,8 @@ import java.util.Locale
 
 @Composable
 fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel) {
-    val isDropdownState by remember { mutableStateOf(false) }
-    val isBottomSheetVisible by remember { mutableStateOf(false) }
+    var isDropdownState by remember { mutableStateOf(false) }
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -83,60 +87,10 @@ fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel
             MenuPost(isDropdownState)
         }
         TextPost(post)
+        ImagesPost(post)
         Row(Modifier.padding(12.dp)) {
             BottomButtons(post, newsViewModel, isBottomSheetVisible)
             Views(post)
-        }
-
-        CommentsPost(isBottomSheetVisible)
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun CommentsPost(isBottomSheetVisible: Boolean) {
-    var isBottomSheetVisible1 = isBottomSheetVisible
-    if (isBottomSheetVisible1) {
-        ModalBottomSheet(
-            onDismissRequest = { isBottomSheetVisible1 = false },
-            Modifier.padding()
-        ) {
-            TextField(
-                value = "",
-                onValueChange = {},
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Поиск диалогов") },
-                leadingIcon = { Icon(Icons.Filled.Search, "Поиск диалогов") })
-            LazyRow() {
-                items(5) {
-                    Image(
-                        painter = painterResource(id = R.drawable.gosha),
-                        contentDescription = "Avatar",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(CircleShape),
-                    )
-                }
-            }
-            TextField(
-                value = "",
-                onValueChange = {},
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Сообщение") },
-                leadingIcon = { Icon(Icons.Outlined.MailOutline, "Сообщение") })
-            LazyRow() {
-                items(5) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                        contentDescription = "Avatar",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(CircleShape),
-                    )
-                }
-            }
         }
     }
 }
@@ -181,7 +135,7 @@ private fun OwnerDetails(
 
 @Composable
 private fun MenuPost(_isDropdownState: Boolean) {
-    var isDropdownState = _isDropdownState
+    var isDropdownState by remember { mutableStateOf(_isDropdownState) }
     Box(
         Modifier
             .fillMaxWidth()
@@ -213,13 +167,26 @@ private fun TextPost(post: Item) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun ImagesPost(post: Item) {
+    val images = remember { mutableStateListOf<Attachment>() }
+    post.attachments.forEach {
+        if (it.photo != null) images.add(it)
+    }
+    HorizontalPager(images.size, Modifier.padding(12.dp)) {
+        AsyncImage(images[it].photo.sizes.last().url, "Photo $it")
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomButtons(
     post: Item,
     newsViewModel: NewsViewModel,
     _isBottomSheetVisible: Boolean
 ) {
-    var isBottomSheetVisible = _isBottomSheetVisible
+    var isBottomSheetVisible by remember { mutableStateOf(_isBottomSheetVisible) }
 
     var isUserLiked by remember { mutableStateOf(post.likes.user_likes) }
     var likesCount by remember { mutableStateOf(post.likes.count) }
@@ -257,6 +224,50 @@ private fun BottomButtons(
         post.reposts.count.toString(),
         Icons.Outlined.Send
     ) { isBottomSheetVisible = true }
+
+    if (isBottomSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { isBottomSheetVisible = false },
+            Modifier.padding()
+        ) {
+            TextField(
+                value = "",
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Поиск диалогов") },
+                leadingIcon = { Icon(Icons.Filled.Search, "Поиск диалогов") })
+            LazyRow() {
+                items(5) {
+                    Image(
+                        painter = painterResource(id = R.drawable.gosha),
+                        contentDescription = "Avatar",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape),
+                    )
+                }
+            }
+            TextField(
+                value = "",
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Сообщение") },
+                leadingIcon = { Icon(Icons.Outlined.MailOutline, "Сообщение") })
+            LazyRow() {
+                items(5) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentDescription = "Avatar",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape),
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
