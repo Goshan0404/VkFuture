@@ -59,6 +59,7 @@ import coil.compose.AsyncImage
 import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Attachment
 import com.example.vkfuture.data.model.modelnews.Item
+import com.example.vkfuture.data.model.modelnews.Size
 import com.example.vkfuture.ui.stateholders.NewsViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -175,7 +176,7 @@ private fun ImagesPost(post: Item) {
         if (it.photo != null) images.add(it)
     }
     HorizontalPager(images.size, Modifier.padding(12.dp)) {
-        AsyncImage(images[it].photo.sizes.last().url, "Photo $it")
+        AsyncImage(images[it].photo.sizes[getHighestResPhoto(images[it].photo.sizes)].url, "Photo $it")
     }
 }
 
@@ -309,4 +310,16 @@ private fun convertUnix(time: Int): String { // TODO: ВЫНЕСТИ КУДА-Н
     val date = Date(time.toLong() * 1000)
     val dateFormat = SimpleDateFormat("dd MMMM kk:mm", Locale.getDefault())
     return dateFormat.format(date)
+}
+
+private fun getHighestResPhoto(photos: List<Size>): Int {
+    var max_size = 0
+    var index = 0
+    photos.forEachIndexed{itemIndex, element ->
+        if(element.height * element.width > max_size){
+            max_size = element.height * element.width
+            index = itemIndex
+        }
+    }
+    return index
 }
