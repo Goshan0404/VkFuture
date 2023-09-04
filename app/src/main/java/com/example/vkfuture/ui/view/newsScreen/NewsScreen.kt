@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -98,7 +97,10 @@ private fun ErrorScreen() {
 @Composable
 private fun AddPostButton(navController: NavController) {
     Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.fillMaxSize(1f)) {
-        FloatingActionButton(onClick = { navController.navigate("createPost") }, Modifier.padding(16.dp)) {
+        FloatingActionButton(
+            onClick = { navController.navigate("createPost") },
+            Modifier.padding(16.dp)
+        ) {
             Icon(Icons.Filled.Add, "Добавить пост")
         }
     }
@@ -113,18 +115,34 @@ private fun SetPosts(
     navController: NavController
 ) {
     LazyColumn(state = rememberLazyListState()) {
-        items(posts) { post ->
+        items(count = posts.size, key = { posts[it].id }, itemContent = { index ->
+            val postData = posts[index]
+            if (postData.owner_id > 0) {
+                PersonPost(postData, profiles, newsViewModel, navController)
+            } else {
+                GroupPost(postData, groups, newsViewModel, navController)
+            }
+        })
+    }
+    /*val state = rememberScrollState()
+    Column(Modifier.verticalScroll(state)) {
+        posts.forEach { post ->
             if (post.owner_id > 0) {
                 PersonPost(post = post, profiles, newsViewModel, navController)
             } else {
                 GroupPost(post = post, groups, newsViewModel, navController)
             }
         }
-    }
+    }*/
 }
 
 @Composable
-private fun PersonPost(post: Item, profiles: HashMap<Int, Profile>, newsViewModel: NewsViewModel, navController: NavController) {
+private fun PersonPost(
+    post: Item,
+    profiles: HashMap<Int, Profile>,
+    newsViewModel: NewsViewModel,
+    navController: NavController
+) {
     val profile = profiles[post.owner_id]
     val name = "${profile?.first_name}  ${profile?.last_name}"
     val image = profile?.photo_100
@@ -132,7 +150,12 @@ private fun PersonPost(post: Item, profiles: HashMap<Int, Profile>, newsViewMode
 }
 
 @Composable
-private fun GroupPost(post: Item, groups: HashMap<Int, Group>, newsViewModel: NewsViewModel, navController: NavController) {
+private fun GroupPost(
+    post: Item,
+    groups: HashMap<Int, Group>,
+    newsViewModel: NewsViewModel,
+    navController: NavController
+) {
     val group = groups[post.owner_id * -1]
     val name = group?.name
     val image = group?.photo_100
