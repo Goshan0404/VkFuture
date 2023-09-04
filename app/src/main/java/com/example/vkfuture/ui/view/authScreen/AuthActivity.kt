@@ -35,7 +35,7 @@ class AuthActivity: ComponentActivity() {
                     }
                 }
             }
-            authLauncher.launch(arrayListOf(VKScope.WALL, VKScope.PHOTOS, VKScope.FRIENDS))
+            authLauncher.launch(arrayListOf(VKScope.WALL, VKScope.PHOTOS, VKScope.FRIENDS, VKScope.OFFLINE))
         } else {
             Token.setToken(token, user_id)
             startActivity(Intent(this, MainActivity::class.java))
