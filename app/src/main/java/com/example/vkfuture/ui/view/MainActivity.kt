@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var prefManager: PreferenceManager
     private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
 
         prefManager = PreferenceManager(this)
