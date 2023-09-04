@@ -176,7 +176,7 @@ private fun ImagesPost(post: Item) {
         if (it.photo != null) images.add(it)
     }
     HorizontalPager(images.size, Modifier.padding(12.dp)) {
-        AsyncImage(images[it].photo.sizes[getHighestResPhoto(images[it].photo.sizes)].url, "Photo $it")
+        AsyncImage(images[it].photo.sizes[getHighestResPhoto(images[it].photo.sizes)].url, "Photo $it", placeholder = painterResource(id = R.drawable.ic_launcher_foreground))
     }
 }
 
