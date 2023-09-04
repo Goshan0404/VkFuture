@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Profile
@@ -37,7 +38,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
-fun NewsScreen(newsViewModel: NewsViewModel = viewModel()) {
+fun NewsScreen(newsViewModel: NewsViewModel = viewModel(), navController: NavController) {
 
     val state by newsViewModel.loadState.collectAsState()
     val posts by newsViewModel.post.collectAsState()
@@ -45,7 +46,7 @@ fun NewsScreen(newsViewModel: NewsViewModel = viewModel()) {
     val groups by newsViewModel.groups.collectAsState()
 
     MaterialTheme {
-        SetScreen(newsViewModel, state, posts, profiles, groups)
+        SetScreen(newsViewModel, state, posts, profiles, groups, navController)
     }
 
 }
@@ -56,7 +57,8 @@ private fun SetScreen(
     state: LoadState,
     posts: List<Item>,
     profiles: HashMap<Int, Profile>,
-    groups: HashMap<Int, Group>
+    groups: HashMap<Int, Group>,
+    navController: NavController
 ) {
     val refresh = rememberSwipeRefreshState(isRefreshing = false)
     SwipeRefresh(state = refresh, onRefresh = { newsViewModel.requestNews() }) {
@@ -70,7 +72,7 @@ private fun SetScreen(
         }
     }
 
-    AddPostButton()
+    AddPostButton(navController)
 }
 
 @Composable
@@ -95,9 +97,9 @@ private fun ErrorScreen() {
 }
 
 @Composable
-private fun AddPostButton() {
+private fun AddPostButton(navController: NavController) {
     Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.fillMaxSize(1f)) {
-        FloatingActionButton(onClick = { /*TODO*/ }, Modifier.padding(16.dp)) {
+        FloatingActionButton(onClick = { navController.navigate("createPost") }, Modifier.padding(16.dp)) {
             Icon(Icons.Filled.Add, "Добавить пост")
         }
     }

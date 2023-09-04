@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VkFuture</string>
+    <string name="news">Новости</string>
+    <string name="messages">Сообщения</string>
+    <string name="other">Другое</string>
+    <string name="ahuy">ЕБАТЬ ТЫ КАК СЮДА ПОПАЛ</string>
+    <string name="createPost">Новый пост</string>
+</resources>
