@@ -8,4 +8,6 @@
     <string name="other">Other</string>
     <string name="ahuy">WTF ARE U DOING HERE</string>
     <string name="createPost">New post</string>
+    <string name="group">Group</string>
+    <string name="profile">Profile</string>
 </resources>

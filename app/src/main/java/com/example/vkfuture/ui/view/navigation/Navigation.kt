@@ -16,14 +16,18 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.example.vkfuture.ui.model.BottomNavItem
 import com.example.vkfuture.ui.view.createPostScreen.CreatePostScreen
+import com.example.vkfuture.ui.view.groupScreen.GroupScreen
 import com.example.vkfuture.ui.view.messagesScreen.MessagesScreen
 import com.example.vkfuture.ui.view.newsScreen.NewsScreen
 import com.example.vkfuture.ui.view.otherScreen.OtherScreen
+import com.example.vkfuture.ui.view.profileScreen.ProfileScreen
 
 
 @Composable
@@ -44,6 +48,12 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, a
         }
         composable("createPost") {
             CreatePostScreen()
+        }
+        composable("profile/{user_id}", arguments = listOf(navArgument("user_id") { type = NavType.IntType })){ backStackEntry ->
+            ProfileScreen(user_id = backStackEntry.arguments?.getInt("user_id"), navController)
+        }
+        composable("group/{group_id}", arguments = listOf(navArgument("group_id") { type = NavType.IntType })){ backStackEntry ->
+            GroupScreen(group_id = backStackEntry.arguments?.getInt("group_id"), navController)
         }
     }
 }

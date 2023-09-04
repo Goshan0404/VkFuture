@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.vkfuture.R
 import com.example.vkfuture.data.model.modelnews.Attachment
@@ -66,7 +68,7 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel) {
+fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel, owner_id: Int, navController: NavController) {
     var isDropdownState by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
 
@@ -84,7 +86,7 @@ fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel
                 .padding(12.dp)
                 .height(48.dp)
         ) {
-            OwnerDetails(photo, name, post)
+            OwnerDetails(photo, name, post, owner_id, navController)
             MenuPost(isDropdownState)
         }
         TextPost(post)
@@ -100,37 +102,41 @@ fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel
 private fun OwnerDetails(
     photo: String?,
     name: String?,
-    post: Item
+    post: Item,
+    owner_id: Int,
+    navController: NavController
 ) {
-    AsyncImage(
-        /* painter = painterResource(id = R.drawable.ic_launcher_foreground),*/
-        model = photo,
-        contentDescription = "Avatar",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .size(48.dp)
-            .clip(CircleShape),
-    )
+    Row(Modifier.clickable { if(owner_id < 0) navController.navigate("group/$owner_id") else navController.navigate("profile/$owner_id") }) {
+        AsyncImage(
+            /* painter = painterResource(id = R.drawable.ic_launcher_foreground),*/
+            model = photo,
+            contentDescription = "Avatar",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape),
+        )
 
-    Column(
-        Modifier
-            .fillMaxHeight()
-            .padding(start = 8.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            name ?: "",
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Medium,
-            fontSize = 16.sp,
-            maxLines = 1,
-            modifier = Modifier.widthIn(max = 224.dp)
-        )
-        Text(
-            convertUnix(post.date),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 12.sp
-        )
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .padding(start = 8.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                name ?: "",
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+                maxLines = 1,
+                modifier = Modifier.widthIn(max = 224.dp)
+            )
+            Text(
+                convertUnix(post.date),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 
@@ -176,7 +182,11 @@ private fun ImagesPost(post: Item) {
         if (it.photo != null) images.add(it)
     }
     HorizontalPager(images.size, Modifier.padding(12.dp)) {
-        AsyncImage(images[it].photo.sizes[getHighestResPhoto(images[it].photo.sizes)].url, "Photo $it", placeholder = painterResource(id = R.drawable.ic_launcher_foreground))
+        AsyncImage(
+            images[it].photo.sizes[getHighestResPhoto(images[it].photo.sizes)].url,
+            "Photo $it",
+            placeholder = painterResource(id = R.drawable.ic_launcher_foreground)
+        )
     }
 }
 
@@ -315,8 +325,8 @@ private fun convertUnix(time: Int): String { // TODO: ВЫНЕСТИ КУДА-Н
 private fun getHighestResPhoto(photos: List<Size>): Int {
     var max_size = 0
     var index = 0
-    photos.forEachIndexed{itemIndex, element ->
-        if(element.height * element.width > max_size){
+    photos.forEachIndexed { itemIndex, element ->
+        if (element.height * element.width > max_size) {
             max_size = element.height * element.width
             index = itemIndex
         }

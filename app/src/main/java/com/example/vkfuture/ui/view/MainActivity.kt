@@ -2,6 +2,7 @@ package com.example.vkfuture.ui.view
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -102,6 +103,15 @@ class PreferenceManager(context: Context){
     }
 }
 
-fun Context.getStringByName(stringName: String): String{
-    return getString(resources.getIdentifier(stringName, "string", packageName))
+fun Context.getStringByName(_stringName: String): String{
+    var result = ""
+    var stringName = _stringName
+    if(_stringName.contains("/")) stringName = _stringName.substringBefore("/")
+    try {
+        result = getString(resources.getIdentifier(stringName, "string", packageName))
+    }
+    catch(e: Resources.NotFoundException){
+        result = "Хуй его знает где ты"
+    }
+    return result
 }

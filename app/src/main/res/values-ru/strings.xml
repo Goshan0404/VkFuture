@@ -6,4 +6,6 @@
     <string name="other">Другое</string>
     <string name="ahuy">ЕБАТЬ ТЫ КАК СЮДА ПОПАЛ</string>
     <string name="createPost">Новый пост</string>
+    <string name="group">Группа</string>
+    <string name="profile">Профиль</string>
 </resources>

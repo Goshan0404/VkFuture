@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -68,7 +67,7 @@ private fun SetScreen(
         } else if (state.isError) {
             ErrorScreen()
         } else {
-            SetPosts(posts, profiles, groups, newsViewModel)
+            SetPosts(posts, profiles, groups, newsViewModel, navController)
         }
     }
 
@@ -110,39 +109,32 @@ private fun SetPosts(
     posts: List<Item>,
     profiles: HashMap<Int, Profile>,
     groups: HashMap<Int, Group>,
-    newsViewModel: NewsViewModel
+    newsViewModel: NewsViewModel,
+    navController: NavController
 ) {
     LazyColumn(state = rememberLazyListState()) {
         items(posts) { post ->
             if (post.owner_id > 0) {
-                PersonPost(post = post, profiles, newsViewModel)
+                PersonPost(post = post, profiles, newsViewModel, navController)
             } else {
-                GroupPost(post = post, groups, newsViewModel)
+                GroupPost(post = post, groups, newsViewModel, navController)
             }
         }
     }
 }
 
 @Composable
-private fun PersonPost(post: Item, profiles: HashMap<Int, Profile>, newsViewModel: NewsViewModel) {
+private fun PersonPost(post: Item, profiles: HashMap<Int, Profile>, newsViewModel: NewsViewModel, navController: NavController) {
     val profile = profiles[post.owner_id]
     val name = "${profile?.first_name}  ${profile?.last_name}"
     val image = profile?.photo_100
-    Post(post = post, name = name, photo = image, newsViewModel)
+    Post(post = post, name = name, photo = image, newsViewModel, post.owner_id, navController)
 }
 
 @Composable
-private fun GroupPost(post: Item, groups: HashMap<Int, Group>, newsViewModel: NewsViewModel) {
+private fun GroupPost(post: Item, groups: HashMap<Int, Group>, newsViewModel: NewsViewModel, navController: NavController) {
     val group = groups[post.owner_id * -1]
     val name = group?.name
     val image = group?.photo_100
-    Post(post = post, name = name, photo = image, newsViewModel)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-
-
-@Composable
-fun RepostBottomSheet() { // TODO: СДЕЛАТЬ
-
+    Post(post = post, name = name, photo = image, newsViewModel, post.owner_id, navController)
 }
