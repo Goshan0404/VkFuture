@@ -4,7 +4,7 @@ import com.example.vkfuture.data.retrofit.RetrofitApi
 import com.example.vkfuture.data.retrofit.RetrofitClient
 import com.example.vkfuture.utils.Token
 
-class LikesRepository {
+class PostRepository {
     val retrofitApi: RetrofitApi = RetrofitClient.retrofitApi
 
     suspend fun addLike(type: String, itemId: String, ownerId: String) {

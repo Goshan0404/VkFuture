@@ -95,7 +95,13 @@ class PreferenceManager(context: Context){
     fun saveData(key: String, value: String){
         val editor = sharedPreferences.edit()
         editor.putString(key, value)
-        editor.commit()
+
+        editor.apply()
+    }
+    fun cl() {
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
     }
 
     fun getData(key: String, defaultValue: String): String {

@@ -1,5 +1,6 @@
 package com.example.vkfuture.ui.view.post
 
+import android.graphics.Color
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -53,7 +54,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -68,7 +71,14 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun Post(post: Item, name: String?, photo: String?, newsViewModel: NewsViewModel, owner_id: Int, navController: NavController) {
+fun Post(
+    post: Item,
+    name: String?,
+    photo: String?,
+    newsViewModel: NewsViewModel,
+    owner_id: Int,
+    navController: NavController
+) {
     var isDropdownState by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
 
@@ -106,7 +116,11 @@ private fun OwnerDetails(
     owner_id: Int,
     navController: NavController
 ) {
-    Row(Modifier.clickable { if(owner_id < 0) navController.navigate("group/$owner_id") else navController.navigate("profile/$owner_id") }) {
+    Row(Modifier.clickable {
+        if (owner_id < 0) navController.navigate("group/$owner_id") else navController.navigate(
+            "profile/$owner_id"
+        )
+    }) {
         AsyncImage(
             /* painter = painterResource(id = R.drawable.ic_launcher_foreground),*/
             model = photo,
@@ -166,11 +180,34 @@ private fun MenuPost(_isDropdownState: Boolean) {
 
 @Composable
 private fun TextPost(post: Item) {
+    var textLen by remember { mutableStateOf(4) }
+    var textShowMore by remember { mutableStateOf(R.string.showMore) }
+    val modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+
+
     Text(
-        post.text,
-        modifier = Modifier.padding(start = 12.dp, end = 12.dp),
+        text = post.text,
+        modifier = modifier,
         color = MaterialTheme.colorScheme.onSurface,
-        fontSize = 16.sp
+        fontSize = 16.sp,
+        maxLines = textLen,
+        overflow = TextOverflow.Ellipsis
+    )
+
+
+    Text(
+        stringResource(textShowMore),
+        modifier = modifier.clickable {
+            if (textShowMore == R.string.showMore) {
+                textShowMore = R.string.hide
+                textLen = Int.MAX_VALUE
+
+            } else {
+                textShowMore = R.string.showMore
+                textLen = 4
+            }
+        },
+        fontSize = 16.sp,
     )
 }
 

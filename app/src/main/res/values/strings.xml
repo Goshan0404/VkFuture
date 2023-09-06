@@ -10,4 +10,6 @@
     <string name="createPost">New post</string>
     <string name="group">Group</string>
     <string name="profile">Profile</string>
+    <string name="showMore">Show more</string>
+    <string name="hide">Hide</string>
 </resources>

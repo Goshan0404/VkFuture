@@ -38,4 +38,13 @@ interface RetrofitApi {
         @Query("owner_id") ownerId: String,
         @Query("v") v: String = "5.131"
     )
+
+    @GET("wall.repost")
+    suspend fun doRepost(
+        @Query("object") objectId: String,
+        @Query("message") message: String? = null
+    )
+
+    
+
 }

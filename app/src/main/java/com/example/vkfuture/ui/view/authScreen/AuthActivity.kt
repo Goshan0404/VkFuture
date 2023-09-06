@@ -1,6 +1,7 @@
 package com.example.vkfuture.ui.view.authScreen
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import com.example.vkfuture.ui.view.MainActivity

@@ -3,12 +3,13 @@ package com.example.vkfuture.ui.stateholders
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.vkfuture.NetworkConnectionObserver
 import com.example.vkfuture.ui.model.LoadState
 import com.example.vkfuture.data.model.modelnews.Group
 import com.example.vkfuture.data.model.modelnews.Item
 import com.example.vkfuture.data.model.modelnews.Posts
 import com.example.vkfuture.data.model.modelnews.Profile
-import com.example.vkfuture.data.repository.LikesRepository
+import com.example.vkfuture.data.repository.PostRepository
 import com.example.vkfuture.data.repository.NewsRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Deferred
@@ -35,7 +36,7 @@ class NewsViewModel : ViewModel() {
     val groups = _groups.asStateFlow()
 
     private val newsRepository = NewsRepository()
-    private val likesRepository = LikesRepository()
+    private val postRepository = PostRepository()
 
     private val dispatcherIo = Dispatchers.IO
 
@@ -43,6 +44,7 @@ class NewsViewModel : ViewModel() {
         _loadState.value = LoadState(isError = true)
         Log.d("NewsViewModel", "Error: ${throwable.message}")
     }
+    private val networkConnectionObserver = NetworkConnectionObserver()
 
     init {
         requestNews()
@@ -80,11 +82,11 @@ class NewsViewModel : ViewModel() {
 
         if (status == 1) {
             viewModelScope.launch(dispatcherIo + exceptionHandler) {
-                likesRepository.addLike(type, itemId, ownerId)
+                postRepository.addLike(type, itemId, ownerId)
             }
         } else {
             viewModelScope.launch(dispatcherIo + exceptionHandler) {
-                likesRepository.deleteLike(type, itemId, ownerId)
+                postRepository.deleteLike(type, itemId, ownerId)
             }
         }
     }
