@@ -67,10 +67,11 @@ private fun SetScreen(
             ErrorScreen()
         } else {
             SetPosts(posts, profiles, groups, newsViewModel, navController)
+            AddPostButton(navController)
         }
     }
 
-    AddPostButton(navController)
+
 }
 
 @Composable
@@ -114,8 +115,11 @@ private fun SetPosts(
     newsViewModel: NewsViewModel,
     navController: NavController
 ) {
+
     LazyColumn(state = rememberLazyListState()) {
-        items(count = posts.size, key = { posts[it].id }, itemContent = { index ->
+        items(count = posts.size,
+            key = { posts[it].id },
+            itemContent = { index ->
             val postData = posts[index]
             if (postData.owner_id > 0) {
                 PersonPost(postData, profiles, newsViewModel, navController)

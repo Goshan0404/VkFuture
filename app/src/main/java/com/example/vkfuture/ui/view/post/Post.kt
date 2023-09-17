@@ -89,17 +89,36 @@ fun Post(
                 color = MaterialTheme.colorScheme.surface,
                 //shape = RoundedCornerShape(size = 12.dp)
             )
-            .padding(4.dp)
+
     ) {
         Row(
             modifier = Modifier
                 .padding(12.dp)
                 .height(48.dp)
         ) {
-            OwnerDetails(photo, name, post, owner_id, navController)
+            OwnerDetails(photo, name, post) {
+                if (owner_id < 0)
+                    navController.navigate("group/$owner_id")
+                else navController.navigate(
+                    "profile/$owner_id"
+                )
+            }
             MenuPost(isDropdownState)
         }
-        TextPost(post)
+
+        var textLen by remember { mutableStateOf(4) }
+        var textShowMore by remember { mutableStateOf(R.string.showMore) }
+        TextPost(post, textLen, textShowMore) {
+            if (textShowMore == R.string.showMore) {
+                textShowMore = R.string.hide
+                textLen = Int.MAX_VALUE
+
+            } else {
+                textShowMore = R.string.showMore
+                textLen = 4
+            }
+
+        }
         ImagesPost(post)
         Row(Modifier.padding(12.dp)) {
             BottomButtons(post, newsViewModel, isBottomSheetVisible)
@@ -113,13 +132,10 @@ private fun OwnerDetails(
     photo: String?,
     name: String?,
     post: Item,
-    owner_id: Int,
-    navController: NavController
+    onClick: () -> Unit,
 ) {
     Row(Modifier.clickable {
-        if (owner_id < 0) navController.navigate("group/$owner_id") else navController.navigate(
-            "profile/$owner_id"
-        )
+        onClick()
     }) {
         AsyncImage(
             /* painter = painterResource(id = R.drawable.ic_launcher_foreground),*/
@@ -179,15 +195,11 @@ private fun MenuPost(_isDropdownState: Boolean) {
 }
 
 @Composable
-private fun TextPost(post: Item) {
-    var textLen by remember { mutableStateOf(4) }
-    var textShowMore by remember { mutableStateOf(R.string.showMore) }
-    val modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-
+private fun TextPost(post: Item, textLen: Int, textShowMore: Int, onClick: () -> Unit) {
 
     Text(
         text = post.text,
-        modifier = modifier,
+        modifier = Modifier.padding(start = 12.dp, end = 12.dp),
         color = MaterialTheme.colorScheme.onSurface,
         fontSize = 16.sp,
         maxLines = textLen,
@@ -197,15 +209,10 @@ private fun TextPost(post: Item) {
 
     Text(
         stringResource(textShowMore),
-        modifier = modifier.clickable {
-            if (textShowMore == R.string.showMore) {
-                textShowMore = R.string.hide
-                textLen = Int.MAX_VALUE
-
-            } else {
-                textShowMore = R.string.showMore
-                textLen = 4
-            }
+        modifier = Modifier
+            .padding(start = 12.dp, end = 12.dp)
+            .clickable {
+            onClick()
         },
         fontSize = 16.sp,
     )
@@ -340,7 +347,7 @@ private fun TextIconButton(
 
     FilledTonalButton(
         onClick = {
-            onClick.invoke()
+            onClick()
         },
         Modifier.defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
         contentPadding = PaddingValues(8.dp),

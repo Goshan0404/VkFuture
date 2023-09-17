@@ -44,7 +44,6 @@ class NewsViewModel : ViewModel() {
         _loadState.value = LoadState(isError = true)
         Log.d("NewsViewModel", "Error: ${throwable.message}")
     }
-    private val networkConnectionObserver = NetworkConnectionObserver()
 
     init {
         requestNews()
@@ -91,4 +90,3 @@ class NewsViewModel : ViewModel() {
         }
     }
 }
-
