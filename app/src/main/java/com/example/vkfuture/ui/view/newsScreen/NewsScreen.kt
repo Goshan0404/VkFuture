@@ -3,10 +3,10 @@ package com.example.vkfuture.ui.view.newsScreen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,19 +24,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.vkfuture.data.model.modelnews.Group
-import com.example.vkfuture.data.model.modelnews.Item
-import com.example.vkfuture.data.model.modelnews.Profile
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.vkfuture.data.remote.model.modelnews.Group
+import com.example.vkfuture.data.remote.model.modelnews.Item
+import com.example.vkfuture.data.remote.model.modelnews.Profile
 import com.example.vkfuture.ui.model.LoadState
-import com.example.vkfuture.ui.stateholders.NewsViewModel
-import com.example.vkfuture.ui.view.post.Post
+import com.example.vkfuture.ui.view.Post
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import dagger.hilt.android.AndroidEntryPoint
 
 @Composable
-fun NewsScreen(newsViewModel: NewsViewModel = viewModel(), navController: NavController) {
+fun NewsScreen(newsViewModel: NewsViewModel = hiltViewModel(), navController: NavController) {
+//    val p = newsViewModel.p.collectAsLazyPagingItems()
 
     val state by newsViewModel.loadState.collectAsState()
     val posts by newsViewModel.post.collectAsState()
@@ -46,7 +49,6 @@ fun NewsScreen(newsViewModel: NewsViewModel = viewModel(), navController: NavCon
     MaterialTheme {
         SetScreen(newsViewModel, state, posts, profiles, groups, navController)
     }
-
 }
 
 @Composable
@@ -70,8 +72,6 @@ private fun SetScreen(
             AddPostButton(navController)
         }
     }
-
-
 }
 
 @Composable
@@ -110,13 +110,16 @@ private fun AddPostButton(navController: NavController) {
 @Composable
 private fun SetPosts(
     posts: List<Item>,
-    profiles: HashMap<Int, Profile>,
+    profiles: HashMap<Int,Profile>,
     groups: HashMap<Int, Group>,
     newsViewModel: NewsViewModel,
     navController: NavController
 ) {
 
-    LazyColumn(state = rememberLazyListState()) {
+    LazyColumn(contentPadding = PaddingValues(
+        all = 5.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
         items(count = posts.size,
             key = { posts[it].id },
             itemContent = { index ->
@@ -128,16 +131,6 @@ private fun SetPosts(
             }
         })
     }
-    /*val state = rememberScrollState()
-    Column(Modifier.verticalScroll(state)) {
-        posts.forEach { post ->
-            if (post.owner_id > 0) {
-                PersonPost(post = post, profiles, newsViewModel, navController)
-            } else {
-                GroupPost(post = post, groups, newsViewModel, navController)
-            }
-        }
-    }*/
 }
 
 @Composable
@@ -150,7 +143,7 @@ private fun PersonPost(
     val profile = profiles[post.owner_id]
     val name = "${profile?.first_name}  ${profile?.last_name}"
     val image = profile?.photo_100
-    Post(post = post, name = name, photo = image, newsViewModel, post.owner_id, navController)
+    Post(post = post, ownerName = name, ownerPhoto = image, newsViewModel, navController)
 }
 
 @Composable
@@ -163,5 +156,5 @@ private fun GroupPost(
     val group = groups[post.owner_id * -1]
     val name = group?.name
     val image = group?.photo_100
-    Post(post = post, name = name, photo = image, newsViewModel, post.owner_id, navController)
+    Post(post = post, ownerName = name, ownerPhoto = image, newsViewModel, navController)
 }

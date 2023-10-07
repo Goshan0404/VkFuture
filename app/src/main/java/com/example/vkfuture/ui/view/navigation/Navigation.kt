@@ -34,19 +34,19 @@ import com.example.vkfuture.ui.view.profileScreen.ProfileScreen
 fun Navigation(navController: NavHostController, paddingValues: PaddingValues, activity: ComponentActivity) {
     NavHost(
         navController = navController,
-        startDestination = "news",
+        startDestination = Screen.NewsScreen.route,
         Modifier.padding(paddingValues)
     ) {
-        composable("news") {
+        composable(Screen.NewsScreen.route) {
             NewsScreen(navController = navController)
         }
-        composable("messages") {
+        composable(Screen.MessagesScreen.route) {
             MessagesScreen()
         }
-        composable("other") {
+        composable(Screen.OtherScreen.route) {
             OtherScreen(activity)
         }
-        composable("createPost") {
+        composable(Screen.CreatePostScreen.route) {
             CreatePostScreen()
         }
         composable("profile/{user_id}", arguments = listOf(navArgument("user_id") { type = NavType.IntType })){ backStackEntry ->

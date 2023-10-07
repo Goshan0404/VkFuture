@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.example.vkfuture.R
-import com.example.vkfuture.ui.stateholders.ProfileViewModel
+import com.example.vkfuture.ui.view.profileScreen.ProfileViewModel
 
 @Composable
 fun OtherScreen(activity: ComponentActivity) {
@@ -37,11 +37,11 @@ fun OtherScreen(activity: ComponentActivity) {
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var id by remember { mutableStateOf("") }
-    profileViewModel.userAuthorisated{response ->
-        name = "${response.first_name} ${response.last_name}"
-        phone = response.phone
-        id = response.screen_name
-    }
+//    profileViewModel.userAuthorisated{response ->
+//        name = "${response.first_name} ${response.last_name}"
+//        phone = response.phone
+//        id = response.screen_name
+//    }
 
     LazyColumn {
         item {
