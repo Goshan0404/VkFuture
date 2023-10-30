@@ -32,12 +32,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var prefManager: PreferenceManager
     private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        prefManager = PreferenceManager(this)
         setContent {
             VkFutureTheme {
                 // A surface container using the 'background' color from the theme
@@ -88,26 +86,6 @@ class MainActivity : ComponentActivity() {
                 activity = this
             )
         }
-    }
-}
-
-class PreferenceManager(context: Context){
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("com.example.vkfuture", Context.MODE_PRIVATE)
-
-    fun saveData(key: String, value: String){
-        val editor = sharedPreferences.edit()
-        editor.putString(key, value)
-
-        editor.apply()
-    }
-    fun cl() {
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.apply()
-    }
-
-    fun getData(key: String, defaultValue: String): String {
-        return sharedPreferences.getString(key, defaultValue) ?: defaultValue
     }
 }
 

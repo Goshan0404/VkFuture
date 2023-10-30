@@ -13,6 +13,7 @@ interface RetrofitApi {
         @Query("access_token") token: String = Token.accessToken,
         @Query("filters") filters: String,
         @Query("start_from") startFrom: String? = null,
+        @Query("count") count: Int = 10,
         @Query("v") v: String = "5.131"
     ): Response<PostsResponse>
 

@@ -60,7 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.vkfuture.R
-import com.example.vkfuture.data.remote.model.modelnews.Item
+import com.example.vkfuture.data.local.entity.PostEntity
 import com.example.vkfuture.ui.view.newsScreen.NewsViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -68,9 +68,7 @@ import java.util.Locale
 
 @Composable
 fun Post(
-    post: Item,
-    ownerName: String?,
-    ownerPhoto: String?,
+    post: PostEntity,
     newsViewModel: NewsViewModel,
     navController: NavController
 ) {
@@ -88,8 +86,8 @@ fun Post(
                 .padding(12.dp)
                 .height(48.dp)
         ) {
-            OwnerDetails(ownerPhoto, ownerName, post) {
-                if (post.owner_id < 0)
+            OwnerDetails(post.ownerPhoto, post.ownerName, post) {
+                if (post.ownerIdd < 0)
                     navController.navigate("group/$post.owner_id")
                 else navController.navigate(
                     "profile/$post.owner_id"
@@ -110,7 +108,7 @@ fun Post(
 private fun OwnerDetails(
     photo: String?,
     name: String?,
-    post: Item,
+    post: PostEntity,
     callback: () -> Unit
 ) {
     Row(Modifier.clickable {
@@ -173,7 +171,7 @@ private fun PostMenu() {
 }
 
 @Composable
-private fun PostText(post: Item, textLen: Int, textShowMore: Int, onClick: () -> Unit) {
+private fun PostText(post: PostEntity, textLen: Int, textShowMore: Int, onClick: () -> Unit) {
 
     Text(
         text = post.text,
@@ -197,7 +195,7 @@ private fun PostText(post: Item, textLen: Int, textShowMore: Int, onClick: () ->
 }
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun PostAttachments(post: Item) {
+private fun PostAttachments(post: PostEntity) {
     val attachments = post.attachments
     HorizontalPager(attachments.size, Modifier.padding(12.dp)) {
         attachments.forEach {
@@ -209,7 +207,7 @@ private fun PostAttachments(post: Item) {
 }
 
 @Composable
-private fun PostContent(post: Item) {
+private fun PostContent(post: PostEntity) {
     var textLen by remember { mutableStateOf(4) }
     var textShowMore by remember { mutableStateOf(R.string.showMore) }
     PostText(post, textLen, textShowMore) {
@@ -228,7 +226,7 @@ private fun PostContent(post: Item) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomButtons(
-    post: Item,
+    post: PostEntity,
     newsViewModel: NewsViewModel
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -251,8 +249,8 @@ private fun BottomButtons(
         newsViewModel.userLikeChanged(
             isUserLiked,
             post.type,
-            post.id.toString(),
-            post.owner_id.toString()
+            post.postId.toString(),
+            post.ownerIdd.toString()
         )
     }
 
@@ -316,7 +314,7 @@ private fun BottomButtons(
 }
 
 @Composable
-private fun Views(post: Item) {
+private fun Views(post: PostEntity) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
         Row(Modifier.padding(12.dp)) {
             Icon(Icons.Filled.Person, "Просмотры")
