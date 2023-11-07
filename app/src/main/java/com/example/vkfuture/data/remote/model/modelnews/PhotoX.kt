@@ -8,8 +8,8 @@ data class PhotoX(
     val id: Int,
     val owner_id: Int,
     val post_id: Int,
-    val sizes: List<com.example.vkfuture.data.remote.model.modelnews.Size>,
-    val tags: com.example.vkfuture.data.remote.model.modelnews.Tags,
+    val sizes: List<Size>,
+    val tags: Tags,
     val text: String,
     val user_id: Int,
     val web_view_token: String

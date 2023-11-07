@@ -3,7 +3,7 @@ package com.example.vkfuture.ui.view.profileScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vkfuture.data.remote.model.modelprofiledetails.ProfileDetails
-import com.example.vkfuture.data.remote.repository.ProfileRepository
+import com.example.vkfuture.data.repository.ProfileRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

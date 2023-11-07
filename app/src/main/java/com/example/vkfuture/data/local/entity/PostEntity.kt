@@ -9,14 +9,14 @@ import com.example.vkfuture.data.remote.model.modelnews.Views
 
 data class PostEntity(
     val type: String,
-    val ownerName: String?,
-    val ownerPhoto: String?,
+    val ownerName: String,
+    val ownerPhoto: String,
     val text: String,
     val attachments: List<Attachment>,
     val comments: Comments,
     val date: Int,
     val likes: Likes,
-    val ownerIdd: Int,
+    val ownerId: Int,
     val postId: Int,
     val reposts: Reposts,
     val views: Views

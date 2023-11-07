@@ -35,13 +35,13 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
-fun NewsScreen(newsViewModel: NewsViewModel = hiltViewModel(), navController: NavController) {
+fun NewsScreen(newsViewModel: NewsViewModel = hiltViewModel(), navigateTo: (route: String) -> Unit) {
 
     val posts = newsViewModel.post.collectAsLazyPagingItems()
     val loadingState = posts.loadState
 
     MaterialTheme {
-        SetScreen(newsViewModel, loadingState, posts, navController)
+        SetScreen(newsViewModel, loadingState, posts, navigateTo)
     }
 }
 
@@ -50,7 +50,7 @@ private fun SetScreen(
     newsViewModel: NewsViewModel,
     loadingState: CombinedLoadStates,
     posts: LazyPagingItems<PostEntity>,
-    navController: NavController,
+    navigateTo: (route: String) -> Unit
 ) {
     val refresh = rememberSwipeRefreshState(isRefreshing = false)
     SwipeRefresh(state = refresh, onRefresh = { newsViewModel.requestNews() }) {
@@ -60,8 +60,8 @@ private fun SetScreen(
         } else if (loadingState.refresh is LoadState.Error) {
             ErrorScreen()
         } else {
-            SetPosts(posts, newsViewModel, navController)
-            AddPostButton(navController)
+            SetPosts(posts, newsViewModel, navigateTo)
+            AddPostButton(navigateTo)
         }
     }
 }
@@ -88,10 +88,10 @@ private fun ErrorScreen() {
 }
 
 @Composable
-private fun AddPostButton(navController: NavController) {
+private fun AddPostButton(navigateTo: (route: String) -> Unit) {
     Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.fillMaxSize(1f)) {
         FloatingActionButton(
-            onClick = { navController.navigate("createPost") },
+            onClick = { navigateTo("create") },
             Modifier.padding(16.dp)
         ) {
             Icon(Icons.Filled.Add, "Добавить пост")
@@ -103,7 +103,7 @@ private fun AddPostButton(navController: NavController) {
 private fun SetPosts(
     posts: LazyPagingItems<PostEntity>,
     newsViewModel: NewsViewModel,
-    navController: NavController,
+    navigateTo: (route: String) -> Unit
 ) {
 
     LazyColumn(
@@ -116,7 +116,7 @@ private fun SetPosts(
             key = { posts[it]!!.postId },
             itemContent = { index ->
                 val postData = checkNotNull(posts[index])
-                Post(post = postData, newsViewModel, navController)
+                Post(post = postData, newsViewModel, navigateTo)
             })
     }
 }

@@ -1,10 +1,9 @@
-package com.example.vkfuture
+package com.example.vkfuture.data.repository.news
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.vkfuture.data.local.entity.PostEntity
 import com.example.vkfuture.data.remote.model.modelnews.Group
-import com.example.vkfuture.data.remote.model.modelnews.Item
 import com.example.vkfuture.data.remote.model.modelnews.PostsResponse
 import com.example.vkfuture.data.remote.model.modelnews.Profile
 import com.example.vkfuture.data.remote.retrofit.RetrofitApi
@@ -23,7 +22,6 @@ class NewsPagingSource(private val retrofitApi: RetrofitApi): PagingSource<Strin
         if (result.isSuccessful) {
             val nextKey =checkNotNull(result.body()).response.next_from
 
-
             val posts = mapPosts(result)
 
             return LoadResult.Page(posts, null, nextKey)
@@ -40,16 +38,16 @@ class NewsPagingSource(private val retrofitApi: RetrofitApi): PagingSource<Strin
         val profiles = HashMap<Int, Profile>()
 
         checkNotNull(result.body()).response.groups.forEach {
-            groups[it.id] = it
+            groups[-it.id] = it
         }
         checkNotNull(result.body()).response.profiles.forEach {
             profiles[it.id] = it
         }
         val posts = postsResult.map {
             if (it.owner_id > 0)
-                it.toEntity(profiles[it.owner_id])
+                it.toEntity(checkNotNull(profiles[it.owner_id]))
             else
-                it.toEntity(groups[it.owner_id])
+                it.toEntity(checkNotNull( groups[it.owner_id]))
         }
         return posts
     }

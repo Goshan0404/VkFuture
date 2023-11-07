@@ -11,8 +11,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.example.vkfuture.utils.Constants
 import com.example.vkfuture.utils.Token
@@ -20,43 +18,33 @@ import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.TOKEN_DATA_STORE)
 
 class AuthActivity : ComponentActivity() {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.tokenDataStore)
 
+    private var token: String? = null
+    private var userId: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        lifecycleScope.launch(Dispatchers.IO) {
+            launch {
+                token = getFromDataStore(Constants.ACCESS_TOKEN)
+                userId = getFromDataStore(Constants.USER_ID)
+            }.join()
 
-        val token: LiveData<String> = dataStore.data.map {
-            it[stringPreferencesKey(Constants.accessToken)] ?: ""
-        }.asLiveData()
-
-        val userId: LiveData<String> = dataStore.data.map {
-            it[stringPreferencesKey(Constants.userId)] ?: ""
-        }.asLiveData()
-
-        token.observe(this) { tokenData ->
-            userId.observe(this) { idData ->
-                if (tokenData != "" && idData != "") {
-                    Token.setToken(tokenData, idData)
-                    startActivity(Intent(this@AuthActivity, MainActivity::class.java))
-                }
+            if (token == null || userId == null) {
+                startAuthorization()
+            } else {
+                Token.accessToken = token as String
+                Token.userId = userId as String
+                startActivity(Intent(this@AuthActivity, MainActivity::class.java))
             }
-        }
-
-        if (token.value != null && userId.value != null) {
-            Token.setToken(checkNotNull(token.value), checkNotNull(userId.value))
-            startActivity(Intent(this@AuthActivity, MainActivity::class.java))
-        } else {
-            startAuthorization(token, userId)
         }
     }
 
@@ -67,29 +55,39 @@ class AuthActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun getFromDataStore(key: String): Flow<String?> {
+    private suspend fun getFromDataStore(key: String): String? {
         val keyDataStore = stringPreferencesKey(key)
-        val value: Flow<String?> = dataStore.data
+        val value = dataStore.data
             .map { preferences ->
                 preferences[keyDataStore]
-            }
+            }.stateIn(lifecycleScope).value
         return value
     }
 
-    private fun startAuthorization(token: LiveData<String>, userId: LiveData<String>) {
+    private fun startAuthorization() {
 
         val authLauncher = VK.login(this) { result: VKAuthenticationResult ->
             when (result) {
                 is VKAuthenticationResult.Success -> {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        saveToDataStore(Constants.accessToken, result.token.accessToken)
-                        saveToDataStore(Constants.userId, result.token.userId.toString())
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        launch {
+                            token = result.token.accessToken
+                            userId = result.token.userId.toString()
+                            saveToDataStore(Constants.ACCESS_TOKEN, token!!)
+                            saveToDataStore(Constants.USER_ID, userId!!)
+                            Token.accessToken = result.token.accessToken
+                            Token.userId = result.token.userId.toString()
+                        }.join()
+
+                        startActivity(Intent(this@AuthActivity, MainActivity::class.java))
+
                     }
                 }
 
                 is VKAuthenticationResult.Failed -> {
                     Log.d("VkException", "onCreate: ${result.exception}")
                     Toast.makeText(this, "Ошибка авторизации", Toast.LENGTH_SHORT).show()
+
                 }
             }
         }

@@ -70,7 +70,7 @@ import java.util.Locale
 fun Post(
     post: PostEntity,
     newsViewModel: NewsViewModel,
-    navController: NavController
+    navigateTo: (route: String) -> Unit
 ) {
 
     Card(
@@ -87,11 +87,10 @@ fun Post(
                 .height(48.dp)
         ) {
             OwnerDetails(post.ownerPhoto, post.ownerName, post) {
-                if (post.ownerIdd < 0)
-                    navController.navigate("group/$post.owner_id")
-                else navController.navigate(
-                    "profile/$post.owner_id"
-                )
+                if (post.ownerId < 0)
+                    navigateTo("group/$post.owner_id")
+                else
+                    navigateTo("profile/$post.owner_id")
             }
             PostMenu()
         }
@@ -250,7 +249,7 @@ private fun BottomButtons(
             isUserLiked,
             post.type,
             post.postId.toString(),
-            post.ownerIdd.toString()
+            post.ownerId.toString()
         )
     }
 

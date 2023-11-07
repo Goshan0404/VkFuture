@@ -29,16 +29,19 @@ data class Item(
     val type: String,
     val views: Views
 ) {
-    fun toEntity(group: Group?): PostEntity {
-        return PostEntity(id, type, group?.name, text, attachments,
-            comments, date, likes, owner_id, post_id,
-            reposts, views)
+    fun toEntity(group: Group): PostEntity {
+            return PostEntity(
+                type = type, ownerName = group.name, ownerPhoto = group.photo_100,
+                attachments = attachments, text = text, comments = comments, date = date, likes = likes,
+                ownerId = owner_id, reposts = reposts, views = views, postId = post_id)
+
     }
 
-    fun toEntity(profile: Profile?): PostEntity {
-        return PostEntity(id, type,"${profile?.first_name} ${profile?.last_name}",
-            text, attachments,
-            comments, date, likes, owner_id, post_id,
-            reposts, views)
+    fun toEntity(profile: Profile): PostEntity {
+            return PostEntity(
+                type = type, ownerName = "${profile.first_name} ${profile.last_name}",
+                ownerPhoto = profile.photo_100,
+                attachments = attachments, text = text, comments = comments, date = date, likes = likes,
+                ownerId = owner_id, reposts = reposts, views = views, postId = post_id)
     }
 }

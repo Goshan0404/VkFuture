@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.vkfuture.data.local.entity.PostEntity
-import com.example.vkfuture.data.remote.repository.PostRepository
-import com.example.vkfuture.data.remote.repository.NewsRepository
+import com.example.vkfuture.data.repository.PostRepository
+import com.example.vkfuture.data.repository.news.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers

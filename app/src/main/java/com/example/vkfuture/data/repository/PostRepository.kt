@@ -1,4 +1,4 @@
-package com.example.vkfuture.data.remote.repository
+package com.example.vkfuture.data.repository
 
 import com.example.vkfuture.data.remote.retrofit.RetrofitApi
 import javax.inject.Inject

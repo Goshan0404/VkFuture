@@ -26,13 +26,14 @@ import com.example.vkfuture.ui.model.BottomNavItem
 import com.example.vkfuture.ui.theme.VkFutureTheme
 import com.example.vkfuture.ui.view.navigation.BottomNavBar
 import com.example.vkfuture.ui.view.navigation.Navigation
+import com.example.vkfuture.ui.view.navigation.Screen
 import com.vk.api.sdk.auth.VKScope.*
 import dagger.hilt.android.AndroidEntryPoint
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var navController: NavHostController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,9 +47,10 @@ class MainActivity : ComponentActivity() {
 
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun setView() {
-        navController = rememberNavController()
+        val navController = rememberNavController()
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute by remember { derivedStateOf { currentBackStackEntry?.destination?.route ?: "" } }
         Scaffold(topBar = {
@@ -60,17 +62,17 @@ class MainActivity : ComponentActivity() {
                 items = listOf(
                     BottomNavItem(
                         name = getString(R.string.news),
-                        route = "news",
+                        route = Screen.NewsScreen.route,
                         icon = Icons.Filled.Home
                     ),
                     BottomNavItem(
                         name = getString(R.string.messages),
-                        route = "messages",
+                        route = Screen.MessagesScreen.route,
                         icon = Icons.Filled.MailOutline
                     ),
                     BottomNavItem(
                         name = getString(R.string.other),
-                        route = "other",
+                        route = Screen.OtherScreen.route,
                         icon = Icons.Filled.MoreVert
                     )
                 ),

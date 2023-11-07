@@ -38,7 +38,9 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, a
         Modifier.padding(paddingValues)
     ) {
         composable(Screen.NewsScreen.route) {
-            NewsScreen(navController = navController)
+            NewsScreen() {
+                navController.navigate(it)
+            }
         }
         composable(Screen.MessagesScreen.route) {
             MessagesScreen()
@@ -49,10 +51,14 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, a
         composable(Screen.CreatePostScreen.route) {
             CreatePostScreen()
         }
-        composable("profile/{user_id}", arguments = listOf(navArgument("user_id") { type = NavType.IntType })){ backStackEntry ->
+        composable("profile/{user_id}",
+            arguments = listOf(navArgument("user_id") { type = NavType.IntType }))
+        { backStackEntry ->
             ProfileScreen(user_id = backStackEntry.arguments?.getInt("user_id"), navController)
         }
-        composable("group/{group_id}", arguments = listOf(navArgument("group_id") { type = NavType.IntType })){ backStackEntry ->
+        composable("group/{group_id}",
+            arguments = listOf(navArgument("group_id") { type = NavType.IntType }))
+        { backStackEntry ->
             GroupScreen(group_id = backStackEntry.arguments?.getInt("group_id"), navController)
         }
     }
